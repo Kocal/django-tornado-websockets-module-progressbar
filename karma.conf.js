@@ -27,7 +27,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'dist/tornado_websocket.js': ['coverage']
+            'dist/progress_bar.js': ['coverage']
         },
 
 
