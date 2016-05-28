@@ -2,6 +2,12 @@
  * Created by kocal on 26/05/16.
  */
 
+describe('`ProgressBarModule`', function () {
+    it('should be defined', function () {
+        expect(ProgressBarModule).toBeDefined();
+    });
+});
+
 describe('`ProgressBarModule` instances', function () {
 
     it('should be a `ProgressBarModule` instance', function () {
