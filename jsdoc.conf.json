@@ -1,0 +1,18 @@
+{
+  "source": {
+    "include": ["package.json", "README.md", "LICENSE"],
+    "includePattern": "progress_bar.js$"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "opts": {
+    "destination": "./doc/",
+    "encoding": "utf8",
+    "template": "./node_modules/docdash"
+  }
+}
