@@ -13,7 +13,7 @@
   "opts": {
     "destination": "./doc/",
     "encoding": "utf8",
-    "template": "./node_modules/docdash",
+    "template": "./node_modules/jaguarjs-jsdoc",
     "private": true
   }
 }
