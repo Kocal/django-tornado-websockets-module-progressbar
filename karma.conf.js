@@ -15,8 +15,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'dist/progress_bar.js',
-            'dist/polyfills.js',
+            'dist/main.js',
             'tests/*.js'
         ],
 

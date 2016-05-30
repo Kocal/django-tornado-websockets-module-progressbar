@@ -23,7 +23,7 @@ class ProgressBarModule
     #     }
     # });
     ###
-    constructor: (path, container, options) ->
+    constructor: (path, container, options={}) ->
         if this not instanceof ProgressBarModule
             return new ProgressBarModule path, container, options
 

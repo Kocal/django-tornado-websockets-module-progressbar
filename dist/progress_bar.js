@@ -26,6 +26,9 @@ ProgressBarModule = (function() {
      * });
      */
     function ProgressBarModule(path, container, options) {
+        if (options == null) {
+            options = {};
+        }
         if (!(this instanceof ProgressBarModule)) {
             return new ProgressBarModule(path, container, options);
         }

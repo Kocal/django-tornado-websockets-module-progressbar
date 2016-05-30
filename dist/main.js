@@ -1,29 +1,54 @@
-/**
- * https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Object/assign
- */
-if (typeof Object.assign != 'function') {
-    (function() {
-        Object.assign = function(target) {
-            'use strict';
-            if (target === undefined || target === null) {
-                throw new TypeError('Cannot convert undefined or null to object');
-            }
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.deepmerge = factory();
+    }
+}(this, function() {
 
-            var output = Object(target);
-            for (var index = 1; index < arguments.length; index++) {
-                var source = arguments[index];
-                if (source !== undefined && source !== null) {
-                    for (var nextKey in source) {
-                        if (Object.prototype.hasOwnProperty.call(source, nextKey)) {
-                            output[nextKey] = source[nextKey];
-                        }
+    return function deepmerge(target, src) {
+        var array = Array.isArray(src);
+        var dst = array && [] || {};
+
+        if (array) {
+            target = target || [];
+            dst = dst.concat(target);
+            src.forEach(function(e, i) {
+                if (typeof dst[i] === 'undefined') {
+                    dst[i] = e;
+                } else if (typeof e === 'object') {
+                    dst[i] = deepmerge(target[i], e);
+                } else {
+                    if (target.indexOf(e) === -1) {
+                        dst.push(e);
                     }
                 }
+            });
+        } else {
+            if (target && typeof target === 'object') {
+                Object.keys(target).forEach(function(key) {
+                    dst[key] = target[key];
+                })
             }
-            return output;
-        };
-    })();
-}
+            Object.keys(src).forEach(function(key) {
+                if (typeof src[key] !== 'object' || !src[key]) {
+                    dst[key] = src[key];
+                } else {
+                    if (!target[key]) {
+                        dst[key] = src[key];
+                    } else {
+                        dst[key] = deepmerge(target[key], src[key]);
+                    }
+                }
+            });
+        }
+
+        return dst;
+    }
+
+}));
 var ProgressBarModuleEngineBootstrap, ProgressBarModuleEngineInterface, ___a,
     extend = function(child, parent) {
         for (var key in parent) {
@@ -63,6 +88,13 @@ ProgressBarModuleEngineInterface = (function() {
         throw new Error('`ProgressBarModuleEngineInterface` should be implemented as an interface.');
     }
 
+
+    /**
+     * Make and display an HTML render to the user.
+     * @memberof ProgressBarModuleEngineInterface
+     * @public
+     */
+
     ProgressBarModuleEngineInterface.prototype.render = function() {
         throw new Error('`render` method should be overridden.');
     };
@@ -80,13 +112,53 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
 
     /**
-     * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}
+     * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
      * @constructs
+     * @extends ProgressBarModuleEngineInterface
      */
 
-    function ProgressBarModuleEngineBootstrap() {}
+    function ProgressBarModuleEngineBootstrap(container, options) {
+        this.container = container;
+        this.options = options;
+    }
 
-    ProgressBarModuleEngineBootstrap.prototype.render = function() {};
+
+    /**
+     * Read {@link ProgressBarModuleEngineInterface#render}.
+     * @memberof ProgressBarModuleEngineBootstrap
+     */
+
+    ProgressBarModuleEngineBootstrap.prototype.render = function() {
+        console.log(this.container);
+        console.log(this.options);
+        this._createElements();
+        this.$progress.appendChild(this.$progressbar);
+        this.container.appendChild(this.$progress);
+        if (this.options.label.position === 'top') {
+            return this.container.insertBefore(this.$label, this.$progress);
+        } else {
+            return this.container.appendChild(this.$label);
+        }
+    };
+
+    ProgressBarModuleEngineBootstrap.prototype._createElements = function() {
+        var __, i, len, ref;
+        this.$progress = document.createElement('div');
+        this.$progress.classList.add('progress');
+        this.$progressbar = document.createElement('div');
+        this.$progressbar.classList.add('progress-bar');
+        this.$progressbar.setAttribute('role', 'progressbar');
+        this.$label = document.createElement('span');
+        ref = this.options.label.classes;
+        for (i = 0, len = ref.length; i < len; i++) {
+            __ = ref[i];
+            this.$label.classList.add(__);
+        }
+        if (this.options.label.visibility === false) {
+            this.$label.style.display = 'none';
+        }
+        return this.$label.textContent = 'Loading...';
+    };
 
     return ProgressBarModuleEngineBootstrap;
 
@@ -119,6 +191,9 @@ ProgressBarModule = (function() {
      * });
      */
     function ProgressBarModule(path, container, options) {
+        if (options == null) {
+            options = {};
+        }
         if (!(this instanceof ProgressBarModule)) {
             return new ProgressBarModule(path, container, options);
         }
@@ -149,7 +224,8 @@ ProgressBarModule = (function() {
          * @prop {Object}  options.bootstrap - Options to use when `type` is `bootstrap`.
          * @prop {Object}  options.bootstrap.label - Options for `label`'s behavior.
          * @prop {Boolean} options.bootstrap.label.visible - Switch on/off `label`'s visibility: `true` by default.
-         * @prop {String}  options.bootstrap.label.position - Change `label`'s position: `top` or `bottom` by default.
+         * @prop {Array}   options.bootstrap.label.classes - Array of CSS classes for `label`'.
+         * @prop {String}  options.bootstrap.label.position - Change `label`'s position: `bottom` or `top` by default.
          * @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior.
          * @prop {String}  options.bootstrap.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
          * @prop {Boolean} options.bootstrap.progressbar.stripped - Switch on/off `progress bar`'s stripped effect: `true` by default.
@@ -161,7 +237,8 @@ ProgressBarModule = (function() {
          * @prop {Object}  options.html5 - Options to use when `type` is `html5`.
          * @prop {Object}  options.html5.label - Options for `label`'s behavior.
          * @prop {Boolean} options.html5.label.visible - Switch on/off `label`'s visibility: `true` by default.
-         * @prop {String}  options.html5.label.position - Change `label`'s position: `top` or `bottom` by default.
+         * @prop {Array}   options.html5.label.classes - Array of CSS classes for `label`'.
+         * @prop {String}  options.html5.label.position - Change `label`'s position: `bottom` or `top` by default.
          * @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
          * @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
          * @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
@@ -174,7 +251,8 @@ ProgressBarModule = (function() {
             bootstrap: {
                 label: {
                     visible: true,
-                    position: 'bottom'
+                    classes: ['progressbar-label'],
+                    position: 'top'
                 },
                 progressbar: {
                     context: 'info',
@@ -189,7 +267,8 @@ ProgressBarModule = (function() {
             html5: {
                 label: {
                     visible: true,
-                    position: 'bottom'
+                    classes: ['progressbar-label'],
+                    position: 'top'
                 },
                 progression: {
                     visible: true,
@@ -198,7 +277,7 @@ ProgressBarModule = (function() {
                 }
             }
         };
-        this.options = Object.assign({}, this.options, options);
+        this.options = deepmerge(this.options, options);
 
         /**
          * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
@@ -207,14 +286,15 @@ ProgressBarModule = (function() {
         this.engine = null;
         switch (this.options.type) {
             case 'bootstrap':
-                this.engine = new ProgressBarModuleEngineBootstrap(this.container, this.options);
+                this.engine = new ProgressBarModuleEngineBootstrap(this.container, this.options.bootstrap);
                 break;
             case 'html5':
-                this.engine = new ProgressBarModuleEngineHtml5(this.container, this.options);
+                this.engine = new ProgressBarModuleEngineHtml5(this.container, this.options.html5);
                 break;
             default:
                 throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.');
         }
+        this.engine.render();
     }
 
     return ProgressBarModule;
