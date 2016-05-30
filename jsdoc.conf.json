@@ -1,7 +1,6 @@
 {
   "source": {
-    "include": ["package.json", "README.md", "LICENSE"],
-    "includePattern": "progress_bar.js$"
+    "include": ["package.json", "dist/engines.js", "README.md", "LICENSE"]
   },
   "plugins": [
     "plugins/markdown"

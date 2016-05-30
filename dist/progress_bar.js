@@ -7,7 +7,7 @@ ProgressBarModule = (function() {
      *
      * @constructs
      * @param {String} path - Path of a progress bar module application
-     * @param {HTMLElement} container - HTML container for progress bar
+     * @param {HTMLElement} container - HTML container for progress bar HTML element
      * @param {Object}  options - Object options
      * @example
      * var $container = document.querySelector('#container');
@@ -19,14 +19,13 @@ ProgressBarModule = (function() {
      *         progressbar: {
      *             animated: false,
      *         },
-     *     },
-     *     progression: {
-     *         text_format: 'Progression: {percent}%'
+     *         progression: {
+     *             format: 'Progression: {percent}%'
+     *         }
      *     }
      * });
      */
     function ProgressBarModule(path, container, options) {
-        var ref;
         if (!(this instanceof ProgressBarModule)) {
             return new ProgressBarModule(path, container, options);
         }
@@ -38,23 +37,42 @@ ProgressBarModule = (function() {
         }
 
         /**
-         * @property {String} path - Path of a progress bar module application.
+         * @prop {String} path - Path of a progress bar module application.
          * @private
          */
         this.path = path;
+
+        /**
+         * @prop {HTMLElement} container - HTML container for progress bar HTML element
+         * @private
+         */
         this.container = container;
 
         /**
-         * @prop {Object}  options - Default options overridden during {@link ProgressBarModule} instantiation
-         * @prop {Object}  options.websocket - Same options than `TornadoWebSocket` constructor
-         * @prop {String}  options.type - Type of the progress bar, `html5` or `bootstrap` by default
-         * @prop {Object}  options.bootstrap - Options to use when `type` is `bootstrap`
-         * @prop {Object}  options.bootstrap.label - Options for `label`'s behavior
-         * @prop {Boolean} options.bootstrap.label.visible - Switch on/off label's visibility, `true` by default
-         * @prop {String}  options.bootstrap.label.position - Label's position `top` or `bottom` by default
-         * @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior
-         * @prop {Boolean} options.bootstrap.progressbar.context - Switch on/off label's visibility, `true` by default
-         * @prop {Object}  options.html5 - configuration when `type` is `html5`
+         * @prop {Object}  options - Default options which can be overridden during {@link ProgressBarModule} instantiation.
+         * @prop {Object}  options.websocket - Same options than `TornadoWebSocket` constructor.
+         * @prop {String}  options.type - Type of the progress bar, `html5` or `bootstrap` by default.
+         *
+         * @prop {Object}  options.bootstrap - Options to use when `type` is `bootstrap`.
+         * @prop {Object}  options.bootstrap.label - Options for `label`'s behavior.
+         * @prop {Boolean} options.bootstrap.label.visible - Switch on/off `label`'s visibility: `true` by default.
+         * @prop {String}  options.bootstrap.label.position - Change `label`'s position: `top` or `bottom` by default.
+         * @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior.
+         * @prop {String}  options.bootstrap.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
+         * @prop {Boolean} options.bootstrap.progressbar.stripped - Switch on/off `progress bar`'s stripped effect: `true` by default.
+         * @prop {Boolean} options.bootstrap.progressbar.animated - Switch on/off `progress bar`'s animated effect: `true` by default.
+         * @prop {Object}  options.bootstrap.progression - Options for `progression`'s behavior.
+         * @prop {Boolean} options.bootstrap.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+         * @prop {String}  options.bootstrap.progression.format - Change `progression`'s format: `{{percent}}%` by default
+         *
+         * @prop {Object}  options.html5 - Options to use when `type` is `html5`.
+         * @prop {Object}  options.html5.label - Options for `label`'s behavior.
+         * @prop {Boolean} options.html5.label.visible - Switch on/off `label`'s visibility: `true` by default.
+         * @prop {String}  options.html5.label.position - Change `label`'s position: `top` or `bottom` by default.
+         * @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
+         * @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+         * @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
+    
          * @private
          */
         this.options = {
@@ -72,7 +90,7 @@ ProgressBarModule = (function() {
                 },
                 progression: {
                     visible: true,
-                    text_format: '{percent}%'
+                    format: '{{percent}}%'
                 }
             },
             html5: {
@@ -83,32 +101,28 @@ ProgressBarModule = (function() {
                 progression: {
                     visible: true,
                     position: 'right',
-                    text_format: '{percent}%'
+                    format: '{{percent}}%'
                 }
             }
         };
         this.options = Object.assign({}, this.options, options);
-        if ((ref = this.options.type) !== 'bootstrap' && ref !== 'html5') {
-            throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.');
+
+        /**
+         * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+         * @private
+         */
+        this.engine = null;
+        switch (this.options.type) {
+            case 'bootstrap':
+                this.engine = new ProgressBarModuleEngineBootstrap(this.container, this.options);
+                break;
+            case 'html5':
+                this.engine = new ProgressBarModuleEngineHtml5(this.container, this.options);
+                break;
+            default:
+                throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.');
         }
-        this.render();
     }
-
-
-    /**
-     * A method
-     * @memberof ProgressBarModule
-     */
-
-    ProgressBarModule.prototype.render = function() {
-        if (this.options.type === 'bootstrap') {
-            console.log('bootstrap');
-            return;
-        }
-        if (this.options.type === 'html5') {
-            console.log('html5');
-        }
-    };
 
     return ProgressBarModule;
 
