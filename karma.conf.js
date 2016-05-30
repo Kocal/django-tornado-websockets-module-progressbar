@@ -15,7 +15,9 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'dist/main.js',
+            'dist/deepmerge.js',
+            'dist/engines.js',
+            'dist/progress_bar.js',
             'tests/*.js'
         ],
 
@@ -27,7 +29,8 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'dist/progress_bar.js': ['coverage']
+            'dist/progress_bar.js': ['coverage'],
+            'dist/engines.js': ['coverage']
         },
 
 
