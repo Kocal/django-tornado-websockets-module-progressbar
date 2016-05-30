@@ -2,6 +2,12 @@
  * Created by kocal on 26/05/16.
  */
 
+describe('`TornadoWebSocket`', function () {
+    it('should be defined', function () {
+        expect(TornadoWebSocket).toBeDefined();
+    });
+});
+
 describe('`ProgressBarModule`', function () {
     it('should be defined', function () {
         expect(ProgressBarModule).toBeDefined();
@@ -52,16 +58,4 @@ describe('`ProgressBarModule(path, container, options)`', function () {
 
 });
 
-describe('`ProgressBarModule::render()`', function () {
 
-    beforeEach(function () {
-        var fixture = '<div id="fixture"><div id="progress-bar__container"></div></div>';
-
-        document.body.insertAdjacentHTML('afterbegin', fixture)
-    });
-
-    afterEach(function () {
-        document.body.removeChild(document.querySelector('#fixture'));
-    });
-
-});

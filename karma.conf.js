@@ -15,6 +15,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            'https://cdn.rawgit.com/Kocal/dtws-client/master/dist/main.min.js',
             'dist/deepmerge.js',
             'dist/engines.js',
             'dist/progress_bar.js',
