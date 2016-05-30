@@ -14,9 +14,11 @@ env:
   - BROWSER='Opera'
 
 install:
+  - sudo npm install -g bower
   - wget http://download1.operacdn.com/pub/opera/desktop/27.0.1689.54/linux/opera-stable_27.0.1689.54_amd64.deb
   - sudo dpkg -i opera-stable_27.0.1689.54_amd64.deb
   - npm install
+  - bower install
 
 before_script:
   - export CHROME_BIN=chromium-browser
