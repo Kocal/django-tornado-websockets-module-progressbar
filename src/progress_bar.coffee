@@ -53,7 +53,8 @@ class ProgressBarModule
         # @prop {Object}  options.bootstrap - Options to use when `type` is `bootstrap`.
         # @prop {Object}  options.bootstrap.label - Options for `label`'s behavior.
         # @prop {Boolean} options.bootstrap.label.visible - Switch on/off `label`'s visibility: `true` by default.
-        # @prop {String}  options.bootstrap.label.position - Change `label`'s position: `top` or `bottom` by default.
+        # @prop {Array}   options.bootstrap.label.classes - Array of CSS classes for `label`'.
+        # @prop {String}  options.bootstrap.label.position - Change `label`'s position: `bottom` or `top` by default.
         # @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior.
         # @prop {String}  options.bootstrap.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
         # @prop {Boolean} options.bootstrap.progressbar.stripped - Switch on/off `progress bar`'s stripped effect: `true` by default.
@@ -65,7 +66,8 @@ class ProgressBarModule
         # @prop {Object}  options.html5 - Options to use when `type` is `html5`.
         # @prop {Object}  options.html5.label - Options for `label`'s behavior.
         # @prop {Boolean} options.html5.label.visible - Switch on/off `label`'s visibility: `true` by default.
-        # @prop {String}  options.html5.label.position - Change `label`'s position: `top` or `bottom` by default.
+        # @prop {Array}   options.html5.label.classes - Array of CSS classes for `label`'.
+        # @prop {String}  options.html5.label.position - Change `label`'s position: `bottom` or `top` by default.
         # @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
         # @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
         # @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
@@ -78,7 +80,8 @@ class ProgressBarModule
             bootstrap:
                 label:
                     visible: true
-                    position: 'bottom' # 'top'
+                    classes: ['progressbar-label']
+                    position: 'top' # 'bottom'
                 progressbar:
                     context: 'info' # 'success', 'warning', 'danger'
                     stripped: true,
@@ -89,13 +92,14 @@ class ProgressBarModule
             html5:
                 label:
                     visible: true
-                    position: 'bottom' # 'top'
+                    classes: ['progressbar-label']
+                    position: 'top' # 'bottom'
                 progression:
                     visible: true
                     position: 'right'
                     format: '{{percent}}%'
 
-        @options = Object.assign {}, @options, options
+        @options = deepmerge @options, options
 
         ###*
         # @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
@@ -104,7 +108,9 @@ class ProgressBarModule
         @engine = null
 
         switch @options.type
-            when 'bootstrap' then @engine = new ProgressBarModuleEngineBootstrap @container, @options
-            when 'html5' then @engine = new ProgressBarModuleEngineHtml5 @container, @options
+            when 'bootstrap' then @engine = new ProgressBarModuleEngineBootstrap @container, @options.bootstrap
+            when 'html5' then @engine = new ProgressBarModuleEngineHtml5 @container, @options.html5
             else throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.')
+
+        @engine.render()
 
