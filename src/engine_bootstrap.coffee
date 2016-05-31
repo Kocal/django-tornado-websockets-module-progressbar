@@ -24,11 +24,8 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
     # @see ProgressBarModuleEngineInterface#onInit
     ###
     onInit: (data) ->
-        console.log 'onInit', data
-
-        min = 0
-        max = 100
-        value = 100
+        #
+        [min, max, value] = [0, 100, 100]
 
         if data.indeterminate is false
             {min: min, max: max, value: value} = data
@@ -55,11 +52,19 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
         return
 
+    ###*
+    # @memberof ProgressBarModuleEngineBootstrap
+    # @see ProgressBarModuleEngineInterface#updateLabel
+    ###
     updateLabel: (msg) ->
         @$label.textContent = msg
 
         return
 
+    ###*
+    # @memberof ProgressBarModuleEngineBootstrap
+    # @see ProgressBarModuleEngineInterface#updateProgression
+    ###
     updateProgression: (progression) ->
         @$progression.textContent = @options.progression.format.replace /\{\{ *percent *\}\}/g, progression
 
@@ -67,8 +72,8 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # Create HTML elements.
-    # @memberof ProgressBarModuleEngineBootStrap
     # @private
+    # @memberof ProgressBarModuleEngineBootstrap
     ###
     _createElements: ->
         # Progress wrapper
@@ -99,8 +104,8 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # Render HTML elements.
-    # @memberof ProgressBarModuleEngineBootStrap
     # @private
+    # @memberof ProgressBarModuleEngineBootstrap
     ###
     _renderElements: ->
         @$progressbar.appendChild @$progression
@@ -117,6 +122,9 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
     ###*
     # Configure progress bar with key/value combination.
     # @private
+    # @memberof ProgressBarModuleEngineBootstrap
+    # @param {*} key - Key of reference.
+    # @param {*} value - Value to save.
     ###
     _config: (key, value) ->
         @_settings[key] = value
@@ -129,3 +137,5 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
                     @$progressbar.classList.add 'progress-bar-striped'
                     @$progressbar.classList.add 'active'
                     @$progressbar.style.width = '100%'
+
+        return

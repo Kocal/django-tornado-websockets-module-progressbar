@@ -48,11 +48,8 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onInit = function(data) {
-    var max, min, value;
-    console.log('onInit', data);
-    min = 0;
-    max = 100;
-    value = 100;
+    var max, min, ref, value;
+    ref = [0, 100, 100], min = ref[0], max = ref[1], value = ref[2];
     if (data.indeterminate === false) {
       min = data.min, max = data.max, value = data.value;
       this.updateProgression(0);
@@ -79,9 +76,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     this.updateProgression(this._settings.progression);
   };
 
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngineInterface#updateLabel
+   */
+
   ProgressBarModuleEngineBootstrap.prototype.updateLabel = function(msg) {
     this.$label.textContent = msg;
   };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngineInterface#updateProgression
+   */
 
   ProgressBarModuleEngineBootstrap.prototype.updateProgression = function(progression) {
     this.$progression.textContent = this.options.progression.format.replace(/\{\{ *percent *\}\}/g, progression);
@@ -90,8 +99,8 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Create HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._createElements = function() {
@@ -128,8 +137,8 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Render HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._renderElements = function() {
@@ -147,6 +156,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
   /**
    * Configure progress bar with key/value combination.
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @param {*} key - Key of reference.
+   * @param {*} value - Value to save.
    */
 
   ProgressBarModuleEngineBootstrap.prototype._config = function(key, value) {
@@ -155,12 +167,13 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       case 'min':
       case 'max':
       case 'value':
-        return this.$progressbar.setAttribute('aria-value' + key, value);
+        this.$progressbar.setAttribute('aria-value' + key, value);
+        break;
       case 'indeterminate':
         if (value === true) {
           this.$progressbar.classList.add('progress-bar-striped');
           this.$progressbar.classList.add('active');
-          return this.$progressbar.style.width = '100%';
+          this.$progressbar.style.width = '100%';
         }
     }
   };
