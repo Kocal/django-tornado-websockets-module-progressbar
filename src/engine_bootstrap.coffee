@@ -1,7 +1,3 @@
-
-class MyEngine extends ProgressBarModuleEngine
-
-
 class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
 
     ###*

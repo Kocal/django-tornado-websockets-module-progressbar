@@ -130,7 +130,7 @@ ProgressBarModuleEngine = (function() {
 
 })();
 
-var MyEngine, ProgressBarModuleEngineBootstrap,
+var ProgressBarModuleEngineBootstrap,
   extend = function(child, parent) {
     for (var key in parent) {
       if (hasProp.call(parent, key)) child[key] = parent[key];
@@ -145,17 +145,6 @@ var MyEngine, ProgressBarModuleEngineBootstrap,
     return child;
   },
   hasProp = {}.hasOwnProperty;
-
-MyEngine = (function(superClass) {
-  extend(MyEngine, superClass);
-
-  function MyEngine() {
-    return MyEngine.__super__.constructor.apply(this, arguments);
-  }
-
-  return MyEngine;
-
-})(ProgressBarModuleEngine);
 
 ProgressBarModuleEngineBootstrap = (function(superClass) {
   extend(ProgressBarModuleEngineBootstrap, superClass);
