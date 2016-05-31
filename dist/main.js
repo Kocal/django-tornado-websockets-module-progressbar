@@ -457,7 +457,7 @@ ProgressBarModule = (function() {
      * @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
      * @public
      */
-    this.websocket = new TornadoWebSocket('/module/progress_bar' + path, this.options.websocket);
+    this.websocket = new TornadoWebSocket('/module/progress_bar' + this.path, this.options.websocket);
     this.init();
   }
 

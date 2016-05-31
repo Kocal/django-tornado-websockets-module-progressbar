@@ -121,7 +121,7 @@ class ProgressBarModule
         # @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
         # @public
         ###
-        @websocket = new TornadoWebSocket '/module/progress_bar' + path, @options.websocket
+        @websocket = new TornadoWebSocket '/module/progress_bar' + @path, @options.websocket
 
         @init()
 
