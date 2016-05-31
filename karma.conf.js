@@ -17,7 +17,8 @@ module.exports = function (config) {
         files: [
             'https://cdn.rawgit.com/Kocal/dtws-client/master/dist/main.min.js',
             'dist/deepmerge.js',
-            'dist/engines.js',
+            'dist/engine_interface.js',
+            'dist/engine_bootstrap.js',
             'dist/progress_bar.js',
             'tests/*.js'
         ],
@@ -31,7 +32,8 @@ module.exports = function (config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'dist/progress_bar.js': ['coverage'],
-            'dist/engines.js': ['coverage']
+            'dist/engine_interface.js': ['coverage'],
+            'dist/engine_bootstrap.js': ['coverage']
         },
 
 
