@@ -19,21 +19,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
 
   /**
-   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
+   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
-   * @extends ProgressBarModuleEngineInterface
+   * @extends ProgressBarModuleEngine
+   * @see ProgressBarModuleEngine
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
-    this.container = container;
-    this.options = options;
+    ProgressBarModuleEngineBootstrap.__super__.constructor.call(this, container, options);
     this._settings = {};
   }
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#render
+   * @see ProgressBarModuleEngine#render
    */
 
   ProgressBarModuleEngineBootstrap.prototype.render = function() {
@@ -44,7 +44,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onInit
+   * @see ProgressBarModuleEngine#onInit
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onInit = function(data) {
@@ -63,7 +63,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onUpdate
+   * @see ProgressBarModuleEngine#onUpdate
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onUpdate = function(data) {
@@ -79,7 +79,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#updateLabel
+   * @see ProgressBarModuleEngine#updateLabel
    */
 
   ProgressBarModuleEngineBootstrap.prototype.updateLabel = function(msg) {
@@ -89,7 +89,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#updateProgression
+   * @see ProgressBarModuleEngine#updateProgression
    */
 
   ProgressBarModuleEngineBootstrap.prototype.updateProgression = function(progression) {
@@ -180,4 +180,4 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   return ProgressBarModuleEngineBootstrap;
 
-})(ProgressBarModuleEngineInterface);
+})(ProgressBarModuleEngine);

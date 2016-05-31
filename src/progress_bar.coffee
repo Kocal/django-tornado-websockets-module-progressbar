@@ -103,7 +103,7 @@ class ProgressBarModule
         @options = deepmerge @options, options
 
         ###*
-        # @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+        # @prop {ProgressBarModuleEngine} engine - Progress bar engine.
         # @public
         ###
         @engine = null

@@ -116,7 +116,7 @@ ProgressBarModule = (function() {
     this.options = deepmerge(this.options, options);
 
     /**
-     * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+     * @prop {ProgressBarModuleEngine} engine - Progress bar engine.
      * @public
      */
     this.engine = null;

@@ -1,70 +1,73 @@
-var ProgressBarModuleEngineInterface;
+var ProgressBarModuleEngine;
 
-ProgressBarModuleEngineInterface = (function() {
+ProgressBarModuleEngine = (function() {
 
   /**
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
+   * @param {HTMLElement} container - HTML container for the progress bar.
+   * @param {Object} options - Options from ProgressBarModule.
    */
-  function ProgressBarModuleEngineInterface() {
-    throw new Error('`ProgressBarModuleEngineInterface` should be implemented as an interface.');
+  function ProgressBarModuleEngine(container, options) {
+    this.container = container;
+    this.options = options;
   }
 
 
   /**
    * Make and display an HTML render to the user.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    */
 
-  ProgressBarModuleEngineInterface.prototype.render = function() {
+  ProgressBarModuleEngine.prototype.render = function() {
     throw new Error('`render` method should be overridden.');
   };
 
 
   /**
    * Called when receive `init` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onInit = function(data) {
+  ProgressBarModuleEngine.prototype.onInit = function(data) {
     throw new Error('`onInit` method should be overridden.');
   };
 
 
   /**
    * Called when receive `update` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onUpdate = function(data) {
+  ProgressBarModuleEngine.prototype.onUpdate = function(data) {
     throw new Error('`onUpdate` method should be overridden.');
   };
 
 
   /**
    * Update label.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {String} label - Label to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateLabel = function(label) {
+  ProgressBarModuleEngine.prototype.updateLabel = function(label) {
     throw new Error('`updateLabel` method should be overridden.');
   };
 
 
   /**
    * Update progression.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Number} progression - Progression to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateProgression = function(progression) {
+  ProgressBarModuleEngine.prototype.updateProgression = function(progression) {
     throw new Error('`updateProgression` method should be overridden.');
   };
 
-  return ProgressBarModuleEngineInterface;
+  return ProgressBarModuleEngine;
 
 })();

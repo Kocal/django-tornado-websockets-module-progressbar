@@ -1,17 +1,19 @@
 
-class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
+class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
 
     ###*
-    # Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
+    # Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
     # @constructs
-    # @extends ProgressBarModuleEngineInterface
+    # @extends ProgressBarModuleEngine
+    # @see ProgressBarModuleEngine
     ###
-    constructor: (@container, @options) ->
+    constructor: (container, options) ->
+        super container, options
         @_settings = {}
 
     ###*
     # @memberof ProgressBarModuleEngineBootstrap
-    # @see ProgressBarModuleEngineInterface#render
+    # @see ProgressBarModuleEngine#render
     ###
     render: ->
         @_createElements()
@@ -21,7 +23,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # @memberof ProgressBarModuleEngineBootstrap
-    # @see ProgressBarModuleEngineInterface#onInit
+    # @see ProgressBarModuleEngine#onInit
     ###
     onInit: (data) ->
         #
@@ -40,7 +42,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # @memberof ProgressBarModuleEngineBootstrap
-    # @see ProgressBarModuleEngineInterface#onUpdate
+    # @see ProgressBarModuleEngine#onUpdate
     ###
     onUpdate: (data) ->
         @_config 'value', data.value
@@ -54,7 +56,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # @memberof ProgressBarModuleEngineBootstrap
-    # @see ProgressBarModuleEngineInterface#updateLabel
+    # @see ProgressBarModuleEngine#updateLabel
     ###
     updateLabel: (msg) ->
         @$label.textContent = msg
@@ -63,7 +65,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngineInterface
 
     ###*
     # @memberof ProgressBarModuleEngineBootstrap
-    # @see ProgressBarModuleEngineInterface#updateProgression
+    # @see ProgressBarModuleEngine#updateProgression
     ###
     updateProgression: (progression) ->
         @$progression.textContent = @options.progression.format.replace /\{\{ *percent *\}\}/g, progression

@@ -50,74 +50,77 @@
 
 }));
 
-var ProgressBarModuleEngineInterface;
+var ProgressBarModuleEngine;
 
-ProgressBarModuleEngineInterface = (function() {
+ProgressBarModuleEngine = (function() {
 
   /**
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
+   * @param {HTMLElement} container - HTML container for the progress bar.
+   * @param {Object} options - Options from ProgressBarModule.
    */
-  function ProgressBarModuleEngineInterface() {
-    throw new Error('`ProgressBarModuleEngineInterface` should be implemented as an interface.');
+  function ProgressBarModuleEngine(container, options) {
+    this.container = container;
+    this.options = options;
   }
 
 
   /**
    * Make and display an HTML render to the user.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    */
 
-  ProgressBarModuleEngineInterface.prototype.render = function() {
+  ProgressBarModuleEngine.prototype.render = function() {
     throw new Error('`render` method should be overridden.');
   };
 
 
   /**
    * Called when receive `init` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onInit = function(data) {
+  ProgressBarModuleEngine.prototype.onInit = function(data) {
     throw new Error('`onInit` method should be overridden.');
   };
 
 
   /**
    * Called when receive `update` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onUpdate = function(data) {
+  ProgressBarModuleEngine.prototype.onUpdate = function(data) {
     throw new Error('`onUpdate` method should be overridden.');
   };
 
 
   /**
    * Update label.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {String} label - Label to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateLabel = function(label) {
+  ProgressBarModuleEngine.prototype.updateLabel = function(label) {
     throw new Error('`updateLabel` method should be overridden.');
   };
 
 
   /**
    * Update progression.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Number} progression - Progression to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateProgression = function(progression) {
+  ProgressBarModuleEngine.prototype.updateProgression = function(progression) {
     throw new Error('`updateProgression` method should be overridden.');
   };
 
-  return ProgressBarModuleEngineInterface;
+  return ProgressBarModuleEngine;
 
 })();
 
@@ -142,21 +145,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
 
   /**
-   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
+   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
-   * @extends ProgressBarModuleEngineInterface
+   * @extends ProgressBarModuleEngine
+   * @see ProgressBarModuleEngine
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
-    this.container = container;
-    this.options = options;
+    ProgressBarModuleEngineBootstrap.__super__.constructor.call(this, container, options);
     this._settings = {};
   }
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#render
+   * @see ProgressBarModuleEngine#render
    */
 
   ProgressBarModuleEngineBootstrap.prototype.render = function() {
@@ -167,7 +170,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onInit
+   * @see ProgressBarModuleEngine#onInit
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onInit = function(data) {
@@ -186,7 +189,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onUpdate
+   * @see ProgressBarModuleEngine#onUpdate
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onUpdate = function(data) {
@@ -202,7 +205,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#updateLabel
+   * @see ProgressBarModuleEngine#updateLabel
    */
 
   ProgressBarModuleEngineBootstrap.prototype.updateLabel = function(msg) {
@@ -212,7 +215,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#updateProgression
+   * @see ProgressBarModuleEngine#updateProgression
    */
 
   ProgressBarModuleEngineBootstrap.prototype.updateProgression = function(progression) {
@@ -303,7 +306,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   return ProgressBarModuleEngineBootstrap;
 
-})(ProgressBarModuleEngineInterface);
+})(ProgressBarModuleEngine);
 
 var ProgressBarModule;
 
@@ -423,7 +426,7 @@ ProgressBarModule = (function() {
     this.options = deepmerge(this.options, options);
 
     /**
-     * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+     * @prop {ProgressBarModuleEngine} engine - Progress bar engine.
      * @public
      */
     this.engine = null;
