@@ -96,7 +96,7 @@ describe('`ProgressBarModule::on(event, callback)`', function () {
 
         TornadoWebSocket.prototype.on.calls.reset();
 
-        progress.on('my_event', function() {
+        progress.on('my_event', function () {
             console.log('Got `my_event`.');
         });
 
@@ -126,6 +126,33 @@ describe('`ProgressBarModule::on(event, callback)`', function () {
         expect(progress.websocket.events.update).toEqual(jasmine.any(Function));
         progress.websocket.events.update({}); // force call
         expect(spyOnInit).toHaveBeenCalledWith({});
+    });
+
+});
+
+describe('`ProgressBarModule::emit(event, data)`', function () {
+
+    it("should be using `TornadoWebSocket::emit(event, callback)` shortcut", function (done) {
+
+        var spyOnEmit = spyOn(TornadoWebSocket.prototype, 'emit').and.callThrough();
+        var progress = new ProgressBarModule('/my_progress_bar', document.createElement('div'), {
+            type: 'bootstrap',
+            websocket: {
+                host: 'kocal.fr'
+            }
+        });
+
+        progress.on('open', function () {
+            progress.emit('my_event', { my: 'data' });
+            expect(spyOnEmit).toHaveBeenCalledWith('my_event', { my: 'data' });
+
+            spyOnEmit.calls.reset();
+
+            progress.emit('my_other_event');
+            expect(spyOnEmit).toHaveBeenCalledWith('my_other_event', {});
+
+            done();
+        })
     });
 
 });
