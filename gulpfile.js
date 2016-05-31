@@ -14,7 +14,7 @@ var uglify = require('gulp-uglify');
 var prettify = require('gulp-jsbeautifier');
 
 gulp.task('scripts', function () {
-    return gulp.src(['src/lib/**/*.js', 'src/**/*.coffee'])
+    return gulp.src(['src/lib/**/*.js', 'src/**/engine_interface.coffee', 'src/**/!(engine_interface).coffee'])
         .pipe(plumber({
             errorHandler: function (error) {
                 console.log(error.message, error.location);
@@ -23,8 +23,9 @@ gulp.task('scripts', function () {
         }))
         .pipe(gulpif(/[.]coffee$/, coffee({ bare: true })))
         .pipe(prettify({
-            indent_size: 4,
-            indent_with_spaces: false
+            end_with_newline: true,
+            indent_size: 2,
+            indent_with_spaces: true
         }))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
