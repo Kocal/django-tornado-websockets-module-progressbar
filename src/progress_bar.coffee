@@ -37,7 +37,8 @@ class ProgressBarModule
         # @prop {String} path - Path of a progress bar module application.
         # @private
         ###
-        @path = path
+        @path = path.trim()
+        @path = if @path[0] is '/' then  @path else '/' + @path
 
         ###*
         # @prop {HTMLElement} container - HTML container for progress bar HTML element
@@ -57,8 +58,8 @@ class ProgressBarModule
         # @prop {String}  options.bootstrap.label.position - Change `label`'s position: `bottom` or `top` by default.
         # @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior.
         # @prop {String}  options.bootstrap.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
-        # @prop {Boolean} options.bootstrap.progressbar.stripped - Switch on/off `progress bar`'s stripped effect: `true` by default.
-        # @prop {Boolean} options.bootstrap.progressbar.animated - Switch on/off `progress bar`'s animated effect: `true` by default.
+        # @prop {Boolean} options.bootstrap.progressbar.striped - Switch on/off `progress bar`'s striped effect: `false` by default.
+        # @prop {Boolean} options.bootstrap.progressbar.animated - Switch on/off `progress bar`'s animated effect: `false` by default.
         # @prop {Object}  options.bootstrap.progression - Options for `progression`'s behavior.
         # @prop {Boolean} options.bootstrap.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
         # @prop {String}  options.bootstrap.progression.format - Change `progression`'s format: `{{percent}}%` by default
@@ -84,8 +85,8 @@ class ProgressBarModule
                     position: 'top' # 'bottom'
                 progressbar:
                     context: 'info' # 'success', 'warning', 'danger'
-                    stripped: true,
-                    animated: true,
+                    striped: false,
+                    animated: false,
                 progression:
                     visible: true,
                     format: '{{percent}}%'
@@ -103,7 +104,7 @@ class ProgressBarModule
 
         ###*
         # @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
-        # @private
+        # @public
         ###
         @engine = null
 
@@ -112,5 +113,28 @@ class ProgressBarModule
             when 'html5' then @engine = new ProgressBarModuleEngineHtml5 @container, @options.html5
             else throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.')
 
+        ###*
+        # @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
+        # @public
+        ###
+        @websocket = new TornadoWebSocket '/module/progress_bar' + path, @options.websocket
+
+        @init()
+
+    init: ->
+        @websocket.on 'init', (data) =>
+            @engine.onInit.apply @engine, [data]
+
+        @websocket.on 'update', (data) =>
+            @engine.onUpdate.apply @engine, [data]
+
         @engine.render()
 
+    on: (event, callback) ->
+        @websocket.on event, callback
+
+    emit: (event, data={}) ->
+        @websocket.emit event, data
+
+    close: ->
+        @websocket.ws.close()
