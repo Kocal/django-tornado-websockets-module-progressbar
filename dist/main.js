@@ -299,6 +299,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       case 'min':
       case 'max':
       case 'value':
+        if (key === 'value') {
+          key = 'now';
+        }
         this.$progressbar.setAttribute('aria-value' + key, value);
         break;
       case 'indeterminate':
@@ -348,11 +351,14 @@ ProgressBarModule = (function() {
     if (!(this instanceof ProgressBarModule)) {
       return new ProgressBarModule(path, container, options);
     }
-    if (path === void 0) {
-      throw new Error("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
+    if (path === void 0 || typeof path !== 'string') {
+      throw new TypeError("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
     }
     if (container === void 0 || !(container instanceof HTMLElement)) {
-      throw new Error("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+      throw new TypeError("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+    }
+    if (!(options instanceof Object)) {
+      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
     }
 
     /**
@@ -455,33 +461,57 @@ ProgressBarModule = (function() {
     this.init();
   }
 
+
+  /**
+   * Is automatically called at the end of the instantiation. Binds `init` and `update` events and render the
+   * progress bar from defined engine.
+   *
+   * @memberof ProgressBarModule
+   */
+
   ProgressBarModule.prototype.init = function() {
-    this.websocket.on('init', (function(_this) {
+    this.on('init', (function(_this) {
       return function(data) {
         return _this.engine.onInit.apply(_this.engine, [data]);
       };
     })(this));
-    this.websocket.on('update', (function(_this) {
+    this.on('update', (function(_this) {
       return function(data) {
         return _this.engine.onUpdate.apply(_this.engine, [data]);
       };
     })(this));
-    return this.engine.render();
+    this.engine.render();
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.on` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Function} callback - Function to execute when event `event` is received.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.on
+   */
 
   ProgressBarModule.prototype.on = function(event, callback) {
     return this.websocket.on(event, callback);
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.emit` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Object|*} data - Data to send.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.emit
+   */
 
   ProgressBarModule.prototype.emit = function(event, data) {
     if (data == null) {
       data = {};
     }
     return this.websocket.emit(event, data);
-  };
-
-  ProgressBarModule.prototype.close = function() {
-    return this.websocket.ws.close();
   };
 
   return ProgressBarModule;

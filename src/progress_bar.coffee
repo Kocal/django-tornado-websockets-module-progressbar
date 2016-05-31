@@ -23,15 +23,18 @@ class ProgressBarModule
     #     }
     # });
     ###
-    constructor: (path, container, options={}) ->
+    constructor: (path, container, options = {}) ->
         if this not instanceof ProgressBarModule
             return new ProgressBarModule path, container, options
 
-        if path is undefined
-            throw new Error "You must pass 'path' parameter during 'ProgressBarModule' instantiation."
+        if path is undefined or typeof path isnt 'string'
+            throw new TypeError "You must pass 'path' parameter during 'ProgressBarModule' instantiation."
 
         if container is undefined or container not instanceof HTMLElement
-            throw new Error "You must pass an HTML element as container during `ProgressBarModule` instantiation."
+            throw new TypeError "You must pass an HTML element as container during `ProgressBarModule` instantiation."
+
+        if options not instanceof Object
+            throw new TypeError "You must pass an Object as options during `ProgressBarModuleEngine` instantiation."
 
         ###*
         # @prop {String} path - Path of a progress bar module application.
@@ -111,7 +114,8 @@ class ProgressBarModule
         switch @options.type
             when 'bootstrap' then @engine = new ProgressBarModuleEngineBootstrap @container, @options.bootstrap
             when 'html5' then @engine = new ProgressBarModuleEngineHtml5 @container, @options.html5
-            else throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.')
+            else
+                throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.')
 
         ###*
         # @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
@@ -121,20 +125,42 @@ class ProgressBarModule
 
         @init()
 
+
+    ###*
+    # Is automatically called at the end of the instantiation. Binds `init` and `update` events and render the
+    # progress bar from defined engine.
+    #
+    # @memberof ProgressBarModule
+    ###
     init: ->
-        @websocket.on 'init', (data) =>
+        @on 'init', (data) =>
             @engine.onInit.apply @engine, [data]
 
-        @websocket.on 'update', (data) =>
+        @on 'update', (data) =>
             @engine.onUpdate.apply @engine, [data]
 
         @engine.render()
+        return
 
+    ###*
+    # Shortcut off `TornadoWebSocket.on` method.
+    #
+    # @param {String} event - Event name.
+    # @param {Function} callback - Function to execute when event `event` is received.
+    # @memberof ProgressBarModule
+    # @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.on
+    ###
     on: (event, callback) ->
         @websocket.on event, callback
 
-    emit: (event, data={}) ->
+    ###*
+    # Shortcut off `TornadoWebSocket.emit` method.
+    #
+    # @param {String} event - Event name.
+    # @param {Object|*} data - Data to send.
+    # @memberof ProgressBarModule
+    # @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.emit
+    ###
+    emit: (event, data = {}) ->
         @websocket.emit event, data
 
-    close: ->
-        @websocket.ws.close()
