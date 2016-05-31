@@ -167,6 +167,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       case 'min':
       case 'max':
       case 'value':
+        if (key === 'value') {
+          key = 'now';
+        }
         this.$progressbar.setAttribute('aria-value' + key, value);
         break;
       case 'indeterminate':

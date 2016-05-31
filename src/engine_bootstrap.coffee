@@ -25,7 +25,6 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
     # @see ProgressBarModuleEngine#onInit
     ###
     onInit: (data) ->
-        #
         [min, max, value] = [0, 100, 100]
 
         if data.indeterminate is false
@@ -132,6 +131,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
 
         switch key
             when 'min', 'max', 'value'
+                key = 'now' if key is 'value'
                 @$progressbar.setAttribute 'aria-value' + key, value
             when 'indeterminate'
                 if value is true
