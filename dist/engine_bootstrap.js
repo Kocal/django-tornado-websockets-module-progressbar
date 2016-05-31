@@ -1,4 +1,4 @@
-var ProgressBarModuleEngineBootstrap,
+var MyEngine, ProgressBarModuleEngineBootstrap,
   extend = function(child, parent) {
     for (var key in parent) {
       if (hasProp.call(parent, key)) child[key] = parent[key];
@@ -13,6 +13,17 @@ var ProgressBarModuleEngineBootstrap,
     return child;
   },
   hasProp = {}.hasOwnProperty;
+
+MyEngine = (function(superClass) {
+  extend(MyEngine, superClass);
+
+  function MyEngine() {
+    return MyEngine.__super__.constructor.apply(this, arguments);
+  }
+
+  return MyEngine;
+
+})(ProgressBarModuleEngine);
 
 ProgressBarModuleEngineBootstrap = (function(superClass) {
   extend(ProgressBarModuleEngineBootstrap, superClass);
@@ -144,11 +155,11 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
   ProgressBarModuleEngineBootstrap.prototype._renderElements = function() {
     this.$progressbar.appendChild(this.$progression);
     this.$progress.appendChild(this.$progressbar);
-    this.container.appendChild(this.$progress);
+    this.$container.appendChild(this.$progress);
     if (this.options.label.position === 'top') {
-      this.container.insertBefore(this.$label, this.$progress);
+      this.$container.insertBefore(this.$label, this.$progress);
     } else {
-      this.container.appendChild(this.$label);
+      this.$container.appendChild(this.$label);
     }
   };
 

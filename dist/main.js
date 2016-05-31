@@ -58,11 +58,17 @@ ProgressBarModuleEngine = (function() {
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
-   * @param {HTMLElement} container - HTML container for the progress bar.
+   * @param {HTMLElement} $container - HTML container for the progress bar.
    * @param {Object} options - Options from ProgressBarModule.
    */
-  function ProgressBarModuleEngine(container, options) {
-    this.container = container;
+  function ProgressBarModuleEngine($container, options) {
+    if ($container === void 0 || !($container instanceof HTMLElement)) {
+      throw new TypeError("You must pass an HTML element as container during `ProgressBarModuleEngine` instantiation.");
+    }
+    if (!(options instanceof Object)) {
+      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
+    }
+    this.$container = $container;
     this.options = options;
   }
 
@@ -124,7 +130,7 @@ ProgressBarModuleEngine = (function() {
 
 })();
 
-var ProgressBarModuleEngineBootstrap,
+var MyEngine, ProgressBarModuleEngineBootstrap,
   extend = function(child, parent) {
     for (var key in parent) {
       if (hasProp.call(parent, key)) child[key] = parent[key];
@@ -139,6 +145,17 @@ var ProgressBarModuleEngineBootstrap,
     return child;
   },
   hasProp = {}.hasOwnProperty;
+
+MyEngine = (function(superClass) {
+  extend(MyEngine, superClass);
+
+  function MyEngine() {
+    return MyEngine.__super__.constructor.apply(this, arguments);
+  }
+
+  return MyEngine;
+
+})(ProgressBarModuleEngine);
 
 ProgressBarModuleEngineBootstrap = (function(superClass) {
   extend(ProgressBarModuleEngineBootstrap, superClass);
@@ -270,11 +287,11 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
   ProgressBarModuleEngineBootstrap.prototype._renderElements = function() {
     this.$progressbar.appendChild(this.$progression);
     this.$progress.appendChild(this.$progressbar);
-    this.container.appendChild(this.$progress);
+    this.$container.appendChild(this.$progress);
     if (this.options.label.position === 'top') {
-      this.container.insertBefore(this.$label, this.$progress);
+      this.$container.insertBefore(this.$label, this.$progress);
     } else {
-      this.container.appendChild(this.$label);
+      this.$container.appendChild(this.$label);
     }
   };
 

@@ -1,4 +1,7 @@
 
+class MyEngine extends ProgressBarModuleEngine
+
+
 class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
 
     ###*
@@ -112,12 +115,12 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
     _renderElements: ->
         @$progressbar.appendChild @$progression
         @$progress.appendChild @$progressbar
-        @container.appendChild @$progress
+        @$container.appendChild @$progress
 
         if @options.label.position is 'top'
-            @container.insertBefore @$label, @$progress
+            @$container.insertBefore @$label, @$progress
         else
-            @container.appendChild @$label
+            @$container.appendChild @$label
 
         return
 
