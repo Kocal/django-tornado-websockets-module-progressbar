@@ -52,12 +52,14 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     ref = [0, 100, 100], min = ref[0], max = ref[1], value = ref[2];
     if (data.indeterminate === false) {
       min = data.min, max = data.max, value = data.value;
-      this.updateProgression(0);
     }
     this._config('indeterminate', data.indeterminate);
     this._config('min', min);
     this._config('max', max);
     this._config('value', value);
+    this.onUpdate({
+      value: value
+    });
   };
 
 

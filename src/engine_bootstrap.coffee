@@ -28,13 +28,13 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         [min, max, value] = [0, 100, 100]
 
         if data.indeterminate is false
-            {min: min, max: max, value: value} = data
-            @updateProgression 0
+            { min: min, max: max, value: value } = data
 
         @_config 'indeterminate', data.indeterminate
         @_config 'min', min
         @_config 'max', max
         @_config 'value', value
+        @onUpdate value: value
 
         return
 
