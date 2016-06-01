@@ -20,6 +20,7 @@ module.exports = function (config) {
             'dist/deepmerge.js',
             'dist/engine.js',
             'dist/engine_bootstrap.js',
+            'dist/engine_html5.js',
             'dist/progress_bar.js',
             'tests/*.js'
         ],
@@ -32,9 +33,10 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'dist/progress_bar.js': ['coverage'],
             'dist/engine.js': ['coverage'],
-            'dist/engine_bootstrap.js': ['coverage']
+            'dist/engine_bootstrap.js': ['coverage'],
+            'dist/engine_html5.js': ['coverage'],
+            'dist/progress_bar.js': ['coverage'],
         },
 
 
