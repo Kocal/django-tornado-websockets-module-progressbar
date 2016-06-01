@@ -1,4 +1,4 @@
-function initProgress($container, options) {
+function initProgressBootstrap($container, options) {
     return new ProgressBarModule('/', $container, {
         websocket: {
             host: 'kocal.fr'
@@ -8,13 +8,21 @@ function initProgress($container, options) {
     });
 }
 
+describe('`ProgressBarModule::engine`', function () {
+    it('should be instance of `ProgressBarModuleEngineBootstrap`', function () {
+        var progress = initProgressBootstrap(document.createElement('div'), {});
+
+        expect(progress.engine).toEqual(jasmine.any(ProgressBarModuleEngineBootstrap));
+    });
+});
+
 describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
 
     var $container;
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -23,7 +31,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('by using default options.', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progress = progress.engine.$progress;
         var $progressbar = progress.engine.$progressbar;
         var $progression = progress.engine.$progression;
@@ -49,21 +57,21 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$label should be visible', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $label = progress.engine.$label;
 
         expect($label.style.display).not.toEqual('none');
     });
 
     it('$label should not be visible', function () {
-        var progress = initProgress($container, { label: { visible: false } });
+        var progress = initProgressBootstrap($container, { label: { visible: false } });
         var $label = progress.engine.$label;
 
         expect($label.style.display).toEqual('none');
     });
 
     it('$progressbar should be using `success` context', function () {
-        var progress = initProgress($container, { progressbar: { context: 'success' } });
+        var progress = initProgressBootstrap($container, { progressbar: { context: 'success' } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -72,7 +80,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
 
 
     it('$progressbar should be using `warning` context', function () {
-        var progress = initProgress($container, { progressbar: { context: 'warning' } });
+        var progress = initProgressBootstrap($container, { progressbar: { context: 'warning' } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -80,7 +88,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progressbar should be using `danger` context', function () {
-        var progress = initProgress($container, { progressbar: { context: 'danger' } });
+        var progress = initProgressBootstrap($container, { progressbar: { context: 'danger' } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -88,7 +96,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progressbar should not be using context if it is unknown', function () {
-        var progress = initProgress($container, { progressbar: { context: 'not a context' } });
+        var progress = initProgressBootstrap($container, { progressbar: { context: 'not a context' } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -99,7 +107,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progressbar should be striped', function () {
-        var progress = initProgress($container, { progressbar: { striped: true } });
+        var progress = initProgressBootstrap($container, { progressbar: { striped: true } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -107,7 +115,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progressbar should not be animated', function () {
-        var progress = initProgress($container, { progressbar: { animated: true } });
+        var progress = initProgressBootstrap($container, { progressbar: { animated: true } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -116,7 +124,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progressbar should be animated', function () {
-        var progress = initProgress($container, { progressbar: { striped: true, animated: true } });
+        var progress = initProgressBootstrap($container, { progressbar: { striped: true, animated: true } });
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).toContain('progress-bar');
@@ -125,7 +133,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progression should be visible', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progression = progress.engine.$progression;
 
         // screen-reader only
@@ -133,7 +141,7 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$progression should not be visible', function () {
-        var progress = initProgress($container, { progression: { visible: false } });
+        var progress = initProgressBootstrap($container, { progression: { visible: false } });
         var $progression = progress.engine.$progression;
 
         expect($progression.classList).toContain('sr-only');
@@ -141,13 +149,13 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
 
 });
 
-describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
+describe('`ProgressBarModuleEngineBootstrap::_renderElement()`', function () {
 
     var $container;
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -156,21 +164,21 @@ describe('`ProgressBarModuleEngineBootstrap::_createElements()`', function () {
     });
 
     it('$label should be above to $progress', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progress = progress.engine.$progress;
         var $label = progress.engine.$label;
 
         $label.textContent = 'Foo';
-        expect(parseInt($label.offsetTop, 10)).toBeLessThan(parseInt($progress.offsetTop, 10));
+        expect($label.offsetTop).toBeLessThan($progress.offsetTop);
     });
 
     it('$label should be below to $progress', function () {
-        var progress = initProgress($container, { label: { position: 'bottom' } });
+        var progress = initProgressBootstrap($container, { label: { position: 'bottom' } });
         var $progress = progress.engine.$progress;
         var $label = progress.engine.$label;
 
         $label.textContent = 'Bar';
-        expect(parseInt($label.offsetTop, 10)).toBeGreaterThan(parseInt($progress.offsetTop, 10));
+        expect($label.offsetTop).toBeGreaterThan($progress.offsetTop);
     });
 
 });
@@ -181,7 +189,7 @@ describe('`ProgressBarModuleEngineBootstrap::_config(key, value)`', function () 
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -190,7 +198,7 @@ describe('`ProgressBarModuleEngineBootstrap::_config(key, value)`', function () 
     });
 
     it('should set `aria-valuemin` value to $progressbar', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.getAttribute('aria-valuemin')).toBeNull();
@@ -200,7 +208,7 @@ describe('`ProgressBarModuleEngineBootstrap::_config(key, value)`', function () 
     });
 
     it('should set `aria-valuemmax` value to $progressbar', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.getAttribute('aria-valuemax')).toBeNull();
@@ -210,7 +218,7 @@ describe('`ProgressBarModuleEngineBootstrap::_config(key, value)`', function () 
     });
 
     it('should set `aria-valuenow` value to $progressbar', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.getAttribute('aria-valuenow')).toBeNull();
@@ -220,7 +228,7 @@ describe('`ProgressBarModuleEngineBootstrap::_config(key, value)`', function () 
     });
 
     it('should set $progressbar in `indeterminate` state', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         expect($progressbar.classList).not.toContain('progress-bar-striped');
@@ -241,7 +249,7 @@ describe('`ProgressBarModuleEngineBootstrap::updateLabel(msg)`', function () {
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -250,7 +258,7 @@ describe('`ProgressBarModuleEngineBootstrap::updateLabel(msg)`', function () {
     });
 
     it('should update label...', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $label = progress.engine.$label;
 
         expect($label.textContent).toEqual('');
@@ -265,7 +273,7 @@ describe('`ProgressBarModuleEngineBootstrap::updateLable(msg)`', function () {
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -274,7 +282,7 @@ describe('`ProgressBarModuleEngineBootstrap::updateLable(msg)`', function () {
     });
 
     it('should update progression', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progression = progress.engine.$progression;
 
         progress.engine.updateProgression(50);
@@ -282,7 +290,7 @@ describe('`ProgressBarModuleEngineBootstrap::updateLable(msg)`', function () {
     });
 
     it('should update progression with custom format', function () {
-        var progress = initProgress($container, { progression: { format: 'Progression: {{percent}}%' } });
+        var progress = initProgressBootstrap($container, { progression: { format: 'Progression: {{percent}}%' } });
         var $progression = progress.engine.$progression;
 
         progress.engine.updateProgression(50);
@@ -297,7 +305,7 @@ describe('`ProgressBarModuleEngineBootstrap::onInit(data)`', function () {
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -306,7 +314,7 @@ describe('`ProgressBarModuleEngineBootstrap::onInit(data)`', function () {
     });
 
     it('should not be indeterminate', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         progress.engine.onInit({ indeterminate: false, min: 50, value: 100, max: 200 });
@@ -316,7 +324,7 @@ describe('`ProgressBarModuleEngineBootstrap::onInit(data)`', function () {
     });
 
     it('should be indeterminate', function () {
-        var progress = initProgress($container, {});
+        var progress = initProgressBootstrap($container, {});
         var $progressbar = progress.engine.$progressbar;
 
         progress.engine.onInit({ indeterminate: true, min: 500, value: 1000, max: 2000 });
@@ -337,7 +345,7 @@ describe('`ProgressBarModuleEngineBootstrap::onUpdate(data)`', function () {
 
     beforeEach(function () {
         $container = document.createElement('div');
-        $container.setAttribute('id', 'container');
+        $container.setAttribute('id', 'bootstrap-container');
         document.body.appendChild($container);
     });
 
@@ -346,7 +354,7 @@ describe('`ProgressBarModuleEngineBootstrap::onUpdate(data)`', function () {
     });
 
     it('should be updated', function () {
-        var progress = initProgress($container, { progression: { format: 'Progression: {{percent}}%' } });
+        var progress = initProgressBootstrap($container, { progression: { format: 'Progression: {{percent}}%' } });
         var $progressbar = progress.engine.$progressbar;
         var $progression = progress.engine.$progression;
         var $label = progress.engine.$label;
