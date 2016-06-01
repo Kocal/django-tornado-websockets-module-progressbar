@@ -1,6 +1,6 @@
 {
   "name": "dtws-client-module-progressbar",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Client-side progress bar module for django-tornado-websockets project",
   "main": "index.js",
   "scripts": {
