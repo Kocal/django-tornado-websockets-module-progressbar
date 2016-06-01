@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>TestApp for Bootstrap Engine</title>
   <link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.min.css">
   <style>
     body > div {
@@ -31,18 +31,14 @@
 <body>
 
 <script src="https://cdn.rawgit.com/Kocal/dtws-client/master/dist/main.min.js"></script>
-<!--<script src="../dist/engine_interface.js"></script>-->
-<!--<script src="../dist/engine_bootstrap.js"></script>-->
-<!--<script src="../dist/deepmerge.js"></script>-->
-<!--<script src="../dist/progress_bar.js"></script>-->
 <script src="../dist/main.js"></script>
 <script>
   var $btnProcess = document.querySelector('#process');
   var automations = [
     { type: 'bootstrap', bootstrap: { label: {} } },
     { type: 'bootstrap', bootstrap: { label: { position: 'bottom' } } },
-    { type: 'bootstrap', bootstrap: { label: { visibility: false } } },
-    { type: 'bootstrap', bootstrap: { label: { position: 'bottom', visibility: false } } },
+    { type: 'bootstrap', bootstrap: { label: { visible: false } } },
+    { type: 'bootstrap', bootstrap: { label: { position: 'bottom', visible: false } } },
 
     { type: 'bootstrap', bootstrap: { progressbar: { context: 'info' } } },
     { type: 'bootstrap', bootstrap: { progressbar: { context: 'success' } } },

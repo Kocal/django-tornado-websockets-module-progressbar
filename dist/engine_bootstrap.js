@@ -19,21 +19,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
 
   /**
-   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
+   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
-   * @extends ProgressBarModuleEngineInterface
+   * @extends ProgressBarModuleEngine
+   * @see ProgressBarModuleEngine
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
-    this.container = container;
-    this.options = options;
+    ProgressBarModuleEngineBootstrap.__super__.constructor.call(this, container, options);
     this._settings = {};
   }
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#render
+   * @see ProgressBarModuleEngine#render
    */
 
   ProgressBarModuleEngineBootstrap.prototype.render = function() {
@@ -44,29 +44,28 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onInit
+   * @see ProgressBarModuleEngine#onInit
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onInit = function(data) {
-    var max, min, value;
-    console.log('onInit', data);
-    min = 0;
-    max = 100;
-    value = 100;
+    var max, min, ref, value;
+    ref = [0, 100, 100], min = ref[0], max = ref[1], value = ref[2];
     if (data.indeterminate === false) {
       min = data.min, max = data.max, value = data.value;
-      this.updateProgression(0);
     }
     this._config('indeterminate', data.indeterminate);
     this._config('min', min);
     this._config('max', max);
     this._config('value', value);
+    this.onUpdate({
+      value: value
+    });
   };
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onUpdate
+   * @see ProgressBarModuleEngine#onUpdate
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onUpdate = function(data) {
@@ -79,9 +78,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     this.updateProgression(this._settings.progression);
   };
 
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngine#updateLabel
+   */
+
   ProgressBarModuleEngineBootstrap.prototype.updateLabel = function(msg) {
     this.$label.textContent = msg;
   };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngine#updateProgression
+   */
 
   ProgressBarModuleEngineBootstrap.prototype.updateProgression = function(progression) {
     this.$progression.textContent = this.options.progression.format.replace(/\{\{ *percent *\}\}/g, progression);
@@ -90,8 +101,8 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Create HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._createElements = function() {
@@ -106,9 +117,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     }
     if (this.options.progressbar.striped === true) {
       this.$progressbar.classList.add('progress-bar-striped');
-    }
-    if (this.options.progressbar.animated === true) {
-      this.$progressbar.classList.add('active');
+      if (this.options.progressbar.animated === true) {
+        this.$progressbar.classList.add('active');
+      }
     }
     this.$progression = document.createElement('span');
     if (this.options.progression.visible === false) {
@@ -120,7 +131,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       __ = ref1[i];
       this.$label.classList.add(__);
     }
-    if (this.options.label.visibility === false) {
+    if (this.options.label.visible === false) {
       this.$label.style.display = 'none';
     }
   };
@@ -128,18 +139,18 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Render HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._renderElements = function() {
     this.$progressbar.appendChild(this.$progression);
     this.$progress.appendChild(this.$progressbar);
-    this.container.appendChild(this.$progress);
+    this.$container.appendChild(this.$progress);
     if (this.options.label.position === 'top') {
-      this.container.insertBefore(this.$label, this.$progress);
+      this.$container.insertBefore(this.$label, this.$progress);
     } else {
-      this.container.appendChild(this.$label);
+      this.$container.appendChild(this.$label);
     }
   };
 
@@ -147,6 +158,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
   /**
    * Configure progress bar with key/value combination.
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @param {*} key - Key of reference.
+   * @param {*} value - Value to save.
    */
 
   ProgressBarModuleEngineBootstrap.prototype._config = function(key, value) {
@@ -155,16 +169,20 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       case 'min':
       case 'max':
       case 'value':
-        return this.$progressbar.setAttribute('aria-value' + key, value);
+        if (key === 'value') {
+          key = 'now';
+        }
+        this.$progressbar.setAttribute('aria-value' + key, value);
+        break;
       case 'indeterminate':
         if (value === true) {
           this.$progressbar.classList.add('progress-bar-striped');
           this.$progressbar.classList.add('active');
-          return this.$progressbar.style.width = '100%';
+          this.$progressbar.style.width = '100%';
         }
     }
   };
 
   return ProgressBarModuleEngineBootstrap;
 
-})(ProgressBarModuleEngineInterface);
+})(ProgressBarModuleEngine);

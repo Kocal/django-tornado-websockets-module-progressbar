@@ -38,5 +38,5 @@ gulp.task('scripts', function () {
 });
 
 gulp.task('default', function () {
-    gulp.watch(['src/vendor/**/*.js', 'src/**/*.coffee'], ['scripts']);
+    gulp.watch(['src/lib/**/*.js', 'src/**/*.coffee'], ['scripts']);
 });

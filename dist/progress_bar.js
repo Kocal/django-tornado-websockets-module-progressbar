@@ -24,6 +24,32 @@ ProgressBarModule = (function() {
    *         }
    *     }
    * });
+   *
+   * progress.on('open', function() {
+   *
+   *     progress.emit('an_event ...');
+   *
+   *     progress.on('before_init', function() {
+   *         // Is called before progress bar initialization
+   *     });
+   *
+   *     progress.on('after_init', function() {
+   *         // Is called after progress bar initialization
+   *     });
+   *
+   *     progress.on('before_update', function() {
+   *         // Is called before progress bar updating
+   *     });
+   *
+   *     progress.on('after_update', function() {
+   *         // Is called after progress bar updating
+   *     });
+   *
+   *     progress.on('done', function() {
+   *         // Is called when progression is done
+   *     });
+   * });
+   *
    */
   function ProgressBarModule(path, container, options) {
     if (options == null) {
@@ -32,11 +58,14 @@ ProgressBarModule = (function() {
     if (!(this instanceof ProgressBarModule)) {
       return new ProgressBarModule(path, container, options);
     }
-    if (path === void 0) {
-      throw new Error("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
+    if (path === void 0 || typeof path !== 'string') {
+      throw new TypeError("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
     }
     if (container === void 0 || !(container instanceof HTMLElement)) {
-      throw new Error("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+      throw new TypeError("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+    }
+    if (!(options instanceof Object)) {
+      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
     }
 
     /**
@@ -78,6 +107,7 @@ ProgressBarModule = (function() {
      * @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
      * @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
      * @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
+     * @prop {String}  options.html5.progression.position - Change `progression`'s position: `left` or `right` by default.
     
      * @private
      */
@@ -108,15 +138,15 @@ ProgressBarModule = (function() {
         },
         progression: {
           visible: true,
-          position: 'right',
-          format: '{{percent}}%'
+          format: '{{percent}}%',
+          position: 'right'
         }
       }
     };
     this.options = deepmerge(this.options, options);
 
     /**
-     * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+     * @prop {ProgressBarModuleEngine} engine - Progress bar engine.
      * @public
      */
     this.engine = null;
@@ -135,37 +165,61 @@ ProgressBarModule = (function() {
      * @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
      * @public
      */
-    this.websocket = new TornadoWebSocket('/module/progress_bar' + path, this.options.websocket);
+    this.websocket = new TornadoWebSocket('/module/progress_bar' + this.path, this.options.websocket);
     this.init();
   }
 
+
+  /**
+   * Is automatically called at the end of the instantiation. Binds `init` and `update` events and render the
+   * progress bar from defined engine.
+   *
+   * @memberof ProgressBarModule
+   */
+
   ProgressBarModule.prototype.init = function() {
-    this.websocket.on('init', (function(_this) {
+    this.on('init', (function(_this) {
       return function(data) {
         return _this.engine.onInit.apply(_this.engine, [data]);
       };
     })(this));
-    this.websocket.on('update', (function(_this) {
+    this.on('update', (function(_this) {
       return function(data) {
         return _this.engine.onUpdate.apply(_this.engine, [data]);
       };
     })(this));
-    return this.engine.render();
+    this.engine.render();
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.on` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Function} callback - Function to execute when event `event` is received.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.on
+   */
 
   ProgressBarModule.prototype.on = function(event, callback) {
     return this.websocket.on(event, callback);
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.emit` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Object|*} data - Data to send.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.emit
+   */
 
   ProgressBarModule.prototype.emit = function(event, data) {
     if (data == null) {
       data = {};
     }
     return this.websocket.emit(event, data);
-  };
-
-  ProgressBarModule.prototype.close = function() {
-    return this.websocket.ws.close();
   };
 
   return ProgressBarModule;

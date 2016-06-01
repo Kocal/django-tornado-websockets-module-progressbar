@@ -50,74 +50,83 @@
 
 }));
 
-var ProgressBarModuleEngineInterface;
+var ProgressBarModuleEngine;
 
-ProgressBarModuleEngineInterface = (function() {
+ProgressBarModuleEngine = (function() {
 
   /**
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
+   * @param {HTMLElement} $container - HTML container for the progress bar.
+   * @param {Object} options - Options from ProgressBarModule.
    */
-  function ProgressBarModuleEngineInterface() {
-    throw new Error('`ProgressBarModuleEngineInterface` should be implemented as an interface.');
+  function ProgressBarModuleEngine($container, options) {
+    if ($container === void 0 || !($container instanceof HTMLElement)) {
+      throw new TypeError("You must pass an HTML element as container during `ProgressBarModuleEngine` instantiation.");
+    }
+    if (!(options instanceof Object)) {
+      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
+    }
+    this.$container = $container;
+    this.options = options;
   }
 
 
   /**
    * Make and display an HTML render to the user.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    */
 
-  ProgressBarModuleEngineInterface.prototype.render = function() {
+  ProgressBarModuleEngine.prototype.render = function() {
     throw new Error('`render` method should be overridden.');
   };
 
 
   /**
    * Called when receive `init` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onInit = function(data) {
+  ProgressBarModuleEngine.prototype.onInit = function(data) {
     throw new Error('`onInit` method should be overridden.');
   };
 
 
   /**
    * Called when receive `update` progress bar's websocket event.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Object} data - Data sent by the server.
    */
 
-  ProgressBarModuleEngineInterface.prototype.onUpdate = function(data) {
+  ProgressBarModuleEngine.prototype.onUpdate = function(data) {
     throw new Error('`onUpdate` method should be overridden.');
   };
 
 
   /**
    * Update label.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {String} label - Label to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateLabel = function(label) {
+  ProgressBarModuleEngine.prototype.updateLabel = function(label) {
     throw new Error('`updateLabel` method should be overridden.');
   };
 
 
   /**
    * Update progression.
-   * @memberof ProgressBarModuleEngineInterface
+   * @memberof ProgressBarModuleEngine
    * @param {Number} progression - Progression to display.
    */
 
-  ProgressBarModuleEngineInterface.prototype.updateProgression = function(progression) {
+  ProgressBarModuleEngine.prototype.updateProgression = function(progression) {
     throw new Error('`updateProgression` method should be overridden.');
   };
 
-  return ProgressBarModuleEngineInterface;
+  return ProgressBarModuleEngine;
 
 })();
 
@@ -142,21 +151,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
 
   /**
-   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngineInterface}.
+   * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
-   * @extends ProgressBarModuleEngineInterface
+   * @extends ProgressBarModuleEngine
+   * @see ProgressBarModuleEngine
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
-    this.container = container;
-    this.options = options;
+    ProgressBarModuleEngineBootstrap.__super__.constructor.call(this, container, options);
     this._settings = {};
   }
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#render
+   * @see ProgressBarModuleEngine#render
    */
 
   ProgressBarModuleEngineBootstrap.prototype.render = function() {
@@ -167,29 +176,28 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onInit
+   * @see ProgressBarModuleEngine#onInit
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onInit = function(data) {
-    var max, min, value;
-    console.log('onInit', data);
-    min = 0;
-    max = 100;
-    value = 100;
+    var max, min, ref, value;
+    ref = [0, 100, 100], min = ref[0], max = ref[1], value = ref[2];
     if (data.indeterminate === false) {
       min = data.min, max = data.max, value = data.value;
-      this.updateProgression(0);
     }
     this._config('indeterminate', data.indeterminate);
     this._config('min', min);
     this._config('max', max);
     this._config('value', value);
+    this.onUpdate({
+      value: value
+    });
   };
 
 
   /**
    * @memberof ProgressBarModuleEngineBootstrap
-   * @see ProgressBarModuleEngineInterface#onUpdate
+   * @see ProgressBarModuleEngine#onUpdate
    */
 
   ProgressBarModuleEngineBootstrap.prototype.onUpdate = function(data) {
@@ -202,9 +210,21 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     this.updateProgression(this._settings.progression);
   };
 
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngine#updateLabel
+   */
+
   ProgressBarModuleEngineBootstrap.prototype.updateLabel = function(msg) {
     this.$label.textContent = msg;
   };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @see ProgressBarModuleEngine#updateProgression
+   */
 
   ProgressBarModuleEngineBootstrap.prototype.updateProgression = function(progression) {
     this.$progression.textContent = this.options.progression.format.replace(/\{\{ *percent *\}\}/g, progression);
@@ -213,8 +233,8 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Create HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._createElements = function() {
@@ -229,9 +249,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     }
     if (this.options.progressbar.striped === true) {
       this.$progressbar.classList.add('progress-bar-striped');
-    }
-    if (this.options.progressbar.animated === true) {
-      this.$progressbar.classList.add('active');
+      if (this.options.progressbar.animated === true) {
+        this.$progressbar.classList.add('active');
+      }
     }
     this.$progression = document.createElement('span');
     if (this.options.progression.visible === false) {
@@ -243,7 +263,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       __ = ref1[i];
       this.$label.classList.add(__);
     }
-    if (this.options.label.visibility === false) {
+    if (this.options.label.visible === false) {
       this.$label.style.display = 'none';
     }
   };
@@ -251,18 +271,18 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
 
   /**
    * Render HTML elements.
-   * @memberof ProgressBarModuleEngineBootStrap
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
    */
 
   ProgressBarModuleEngineBootstrap.prototype._renderElements = function() {
     this.$progressbar.appendChild(this.$progression);
     this.$progress.appendChild(this.$progressbar);
-    this.container.appendChild(this.$progress);
+    this.$container.appendChild(this.$progress);
     if (this.options.label.position === 'top') {
-      this.container.insertBefore(this.$label, this.$progress);
+      this.$container.insertBefore(this.$label, this.$progress);
     } else {
-      this.container.appendChild(this.$label);
+      this.$container.appendChild(this.$label);
     }
   };
 
@@ -270,6 +290,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
   /**
    * Configure progress bar with key/value combination.
    * @private
+   * @memberof ProgressBarModuleEngineBootstrap
+   * @param {*} key - Key of reference.
+   * @param {*} value - Value to save.
    */
 
   ProgressBarModuleEngineBootstrap.prototype._config = function(key, value) {
@@ -278,19 +301,202 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       case 'min':
       case 'max':
       case 'value':
-        return this.$progressbar.setAttribute('aria-value' + key, value);
+        if (key === 'value') {
+          key = 'now';
+        }
+        this.$progressbar.setAttribute('aria-value' + key, value);
+        break;
       case 'indeterminate':
         if (value === true) {
           this.$progressbar.classList.add('progress-bar-striped');
           this.$progressbar.classList.add('active');
-          return this.$progressbar.style.width = '100%';
+          this.$progressbar.style.width = '100%';
         }
     }
   };
 
   return ProgressBarModuleEngineBootstrap;
 
-})(ProgressBarModuleEngineInterface);
+})(ProgressBarModuleEngine);
+
+var ProgressBarModuleEngineHtml5,
+  extend = function(child, parent) {
+    for (var key in parent) {
+      if (hasProp.call(parent, key)) child[key] = parent[key];
+    }
+
+    function ctor() {
+      this.constructor = child;
+    }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    child.__super__ = parent.prototype;
+    return child;
+  },
+  hasProp = {}.hasOwnProperty;
+
+ProgressBarModuleEngineHtml5 = (function(superClass) {
+  extend(ProgressBarModuleEngineHtml5, superClass);
+
+
+  /**
+   * HTML5 engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
+   * @constructs
+   * @extends ProgressBarModuleEngine
+   * @see ProgressBarModuleEngine
+   */
+
+  function ProgressBarModuleEngineHtml5(container, options) {
+    ProgressBarModuleEngineHtml5.__super__.constructor.call(this, container, options);
+    this._settings = {};
+  }
+
+
+  /**
+   * @memberof ProgressBarModuleEngineHtml5
+   * @see ProgressBarModuleEngine#render
+   */
+
+  ProgressBarModuleEngineHtml5.prototype.render = function() {
+    this._createElements();
+    this._renderElements();
+  };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineHtml5
+   * @see ProgressBarModuleEngine#onInit
+   */
+
+  ProgressBarModuleEngineHtml5.prototype.onInit = function(data) {
+    var max, min, value;
+    if (data.indeterminate) {
+      return this._config('indeterminate', true);
+    } else {
+      min = data.min, max = data.max, value = data.value;
+      this._config('min', min);
+      this._config('max', max);
+      this._config('value', value);
+      return this.onUpdate({
+        value: value
+      });
+    }
+  };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineHtml5
+   * @see ProgressBarModuleEngine#onUpdate
+   */
+
+  ProgressBarModuleEngineHtml5.prototype.onUpdate = function(data) {
+    this._config('value', data.value);
+    this._config('progression', ((this._settings.value / this._settings.max) * 100).toFixed());
+    if (data.label !== void 0) {
+      this.updateLabel(data.label);
+    }
+    this.updateProgression(this._settings.progression);
+  };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineHtml5
+   * @see ProgressBarModuleEngine#updateLabel
+   */
+
+  ProgressBarModuleEngineHtml5.prototype.updateLabel = function(msg) {
+    this.$label.textContent = msg;
+  };
+
+
+  /**
+   * @memberof ProgressBarModuleEngineHtml5
+   * @see ProgressBarModuleEngine#updateProgression
+   */
+
+  ProgressBarModuleEngineHtml5.prototype.updateProgression = function(progression) {
+    this.$progression.textContent = this.options.progression.format.replace(/\{\{ *percent *\}\}/g, progression);
+  };
+
+
+  /**
+   * Create HTML elements.
+   * @private
+   * @memberof ProgressBarModuleEngineHtml5
+   */
+
+  ProgressBarModuleEngineHtml5.prototype._createElements = function() {
+    var __, i, len, ref;
+    this.$progress = document.createElement('div');
+    this.$progress.classList.add('progress');
+    this.$progressbar = document.createElement('progress');
+    this.$progressbar.classList.add('progress-bar');
+    this.$progression = document.createElement('span');
+    if (this.options.progression.visible === false) {
+      this.$progression.style.display = 'none';
+    }
+    this.$label = document.createElement('span');
+    ref = this.options.label.classes;
+    for (i = 0, len = ref.length; i < len; i++) {
+      __ = ref[i];
+      this.$label.classList.add(__);
+    }
+    if (this.options.label.visible === false) {
+      this.$label.style.display = 'none';
+    }
+  };
+
+
+  /**
+   * Render HTML elements.
+   * @private
+   * @memberof ProgressBarModuleEngineHtml5
+   */
+
+  ProgressBarModuleEngineHtml5.prototype._renderElements = function() {
+    this.$progress.appendChild(this.$progressbar);
+    this.$container.appendChild(this.$progress);
+    if (this.options.label.position === 'top') {
+      this.$container.insertBefore(this.$label, this.$progress);
+    } else {
+      this.$container.appendChild(this.$label);
+    }
+    if (this.options.progression.position === 'left') {
+      this.$progressbar.parentNode.insertBefore(this.$progression, this.$progressbar);
+    } else {
+      this.$progressbar.parentNode.insertBefore(this.$progression, this.$progressbar.nextSibling);
+    }
+  };
+
+
+  /**
+   * Configure progress bar with key/value combination.
+   * @private
+   * @memberof ProgressBarModuleEngineHtml5
+   * @param {*} key - Key of reference.
+   * @param {*} value - Value to save.
+   */
+
+  ProgressBarModuleEngineHtml5.prototype._config = function(key, value) {
+    this._settings[key] = value;
+    switch (key) {
+      case 'min':
+      case 'max':
+      case 'value':
+        this.$progressbar.setAttribute(key, value);
+        break;
+      case 'indeterminate':
+        if (value === true) {
+          this.$progressbar.removeAttribute('min');
+          this.$progressbar.removeAttribute('max');
+          this.$progressbar.removeAttribute('value');
+        }
+    }
+  };
+
+  return ProgressBarModuleEngineHtml5;
+
+})(ProgressBarModuleEngine);
 
 var ProgressBarModule;
 
@@ -318,6 +524,32 @@ ProgressBarModule = (function() {
    *         }
    *     }
    * });
+   *
+   * progress.on('open', function() {
+   *
+   *     progress.emit('an_event ...');
+   *
+   *     progress.on('before_init', function() {
+   *         // Is called before progress bar initialization
+   *     });
+   *
+   *     progress.on('after_init', function() {
+   *         // Is called after progress bar initialization
+   *     });
+   *
+   *     progress.on('before_update', function() {
+   *         // Is called before progress bar updating
+   *     });
+   *
+   *     progress.on('after_update', function() {
+   *         // Is called after progress bar updating
+   *     });
+   *
+   *     progress.on('done', function() {
+   *         // Is called when progression is done
+   *     });
+   * });
+   *
    */
   function ProgressBarModule(path, container, options) {
     if (options == null) {
@@ -326,11 +558,14 @@ ProgressBarModule = (function() {
     if (!(this instanceof ProgressBarModule)) {
       return new ProgressBarModule(path, container, options);
     }
-    if (path === void 0) {
-      throw new Error("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
+    if (path === void 0 || typeof path !== 'string') {
+      throw new TypeError("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
     }
     if (container === void 0 || !(container instanceof HTMLElement)) {
-      throw new Error("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+      throw new TypeError("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+    }
+    if (!(options instanceof Object)) {
+      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
     }
 
     /**
@@ -372,6 +607,7 @@ ProgressBarModule = (function() {
      * @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
      * @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
      * @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
+     * @prop {String}  options.html5.progression.position - Change `progression`'s position: `left` or `right` by default.
     
      * @private
      */
@@ -402,15 +638,15 @@ ProgressBarModule = (function() {
         },
         progression: {
           visible: true,
-          position: 'right',
-          format: '{{percent}}%'
+          format: '{{percent}}%',
+          position: 'right'
         }
       }
     };
     this.options = deepmerge(this.options, options);
 
     /**
-     * @prop {ProgressBarModuleEngineInterface} engine - Progress bar engine.
+     * @prop {ProgressBarModuleEngine} engine - Progress bar engine.
      * @public
      */
     this.engine = null;
@@ -429,37 +665,61 @@ ProgressBarModule = (function() {
      * @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
      * @public
      */
-    this.websocket = new TornadoWebSocket('/module/progress_bar' + path, this.options.websocket);
+    this.websocket = new TornadoWebSocket('/module/progress_bar' + this.path, this.options.websocket);
     this.init();
   }
 
+
+  /**
+   * Is automatically called at the end of the instantiation. Binds `init` and `update` events and render the
+   * progress bar from defined engine.
+   *
+   * @memberof ProgressBarModule
+   */
+
   ProgressBarModule.prototype.init = function() {
-    this.websocket.on('init', (function(_this) {
+    this.on('init', (function(_this) {
       return function(data) {
         return _this.engine.onInit.apply(_this.engine, [data]);
       };
     })(this));
-    this.websocket.on('update', (function(_this) {
+    this.on('update', (function(_this) {
       return function(data) {
         return _this.engine.onUpdate.apply(_this.engine, [data]);
       };
     })(this));
-    return this.engine.render();
+    this.engine.render();
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.on` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Function} callback - Function to execute when event `event` is received.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.on
+   */
 
   ProgressBarModule.prototype.on = function(event, callback) {
     return this.websocket.on(event, callback);
   };
+
+
+  /**
+   * Shortcut off `TornadoWebSocket.emit` method.
+   *
+   * @param {String} event - Event name.
+   * @param {Object|*} data - Data to send.
+   * @memberof ProgressBarModule
+   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.emit
+   */
 
   ProgressBarModule.prototype.emit = function(event, data) {
     if (data == null) {
       data = {};
     }
     return this.websocket.emit(event, data);
-  };
-
-  ProgressBarModule.prototype.close = function() {
-    return this.websocket.ws.close();
   };
 
   return ProgressBarModule;

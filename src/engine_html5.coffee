@@ -1,7 +1,7 @@
-class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
+class ProgressBarModuleEngineHtml5 extends ProgressBarModuleEngine
 
     ###*
-    # Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
+    # HTML5 engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
     # @constructs
     # @extends ProgressBarModuleEngine
     # @see ProgressBarModuleEngine
@@ -11,7 +11,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         @_settings = {}
 
     ###*
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @see ProgressBarModuleEngine#render
     ###
     render: ->
@@ -21,39 +21,34 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         return
 
     ###*
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @see ProgressBarModuleEngine#onInit
     ###
     onInit: (data) ->
-        [min, max, value] = [0, 100, 100]
-
-        if data.indeterminate is false
+        if data.indeterminate
+            @_config 'indeterminate', true
+        else
             { min: min, max: max, value: value } = data
-
-        @_config 'indeterminate', data.indeterminate
-        @_config 'min', min
-        @_config 'max', max
-        @_config 'value', value
-        @onUpdate value: value
-
-        return
+            @_config 'min', min
+            @_config 'max', max
+            @_config 'value', value
+            @onUpdate value: value
 
     ###*
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @see ProgressBarModuleEngine#onUpdate
     ###
     onUpdate: (data) ->
         @_config 'value', data.value
         @_config 'progression', ((@_settings.value / @_settings.max) * 100).toFixed()
 
-        @$progressbar.style.width = @_settings.progression + '%'
         @updateLabel data.label if data.label isnt undefined
         @updateProgression @_settings.progression
 
         return
 
     ###*
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @see ProgressBarModuleEngine#updateLabel
     ###
     updateLabel: (msg) ->
@@ -62,7 +57,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         return
 
     ###*
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @see ProgressBarModuleEngine#updateProgression
     ###
     updateProgression: (progression) ->
@@ -73,28 +68,18 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
     ###*
     # Create HTML elements.
     # @private
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     ###
     _createElements: ->
-        # Progress wrapper
         @$progress = document.createElement 'div'
         @$progress.classList.add 'progress'
 
-        # Progress bar
-        @$progressbar = document.createElement 'div'
+        @$progressbar = document.createElement 'progress'
         @$progressbar.classList.add 'progress-bar'
-        @$progressbar.setAttribute 'role', 'progressbar'
 
-        if @options.progressbar.context in ['info', 'success', 'warning', 'danger']
-            @$progressbar.classList.add 'progress-bar-' + @options.progressbar.context
-
-        if @options.progressbar.striped is true
-            @$progressbar.classList.add 'progress-bar-striped'
-            @$progressbar.classList.add 'active' if @options.progressbar.animated is true
-
-        # Progression (text in progress bar)
+        # Progression (text aside progress bar)
         @$progression = document.createElement 'span'
-        @$progression.classList.add 'sr-only' if @options.progression.visible is false
+        @$progression.style.display = 'none' if @options.progression.visible is false
 
         # Label
         @$label = document.createElement 'span'
@@ -106,10 +91,9 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
     ###*
     # Render HTML elements.
     # @private
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     ###
     _renderElements: ->
-        @$progressbar.appendChild @$progression
         @$progress.appendChild @$progressbar
         @$container.appendChild @$progress
 
@@ -118,12 +102,18 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         else
             @$container.appendChild @$label
 
+        if @options.progression.position is 'left'
+            @$progressbar.parentNode.insertBefore @$progression, @$progressbar
+        else
+            # insertAfter
+            @$progressbar.parentNode.insertBefore @$progression, @$progressbar.nextSibling
+
         return
 
     ###*
     # Configure progress bar with key/value combination.
     # @private
-    # @memberof ProgressBarModuleEngineBootstrap
+    # @memberof ProgressBarModuleEngineHtml5
     # @param {*} key - Key of reference.
     # @param {*} value - Value to save.
     ###
@@ -132,12 +122,11 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
 
         switch key
             when 'min', 'max', 'value'
-                key = 'now' if key is 'value'
-                @$progressbar.setAttribute 'aria-value' + key, value
+                @$progressbar.setAttribute key, value
             when 'indeterminate'
                 if value is true
-                    @$progressbar.classList.add 'progress-bar-striped'
-                    @$progressbar.classList.add 'active'
-                    @$progressbar.style.width = '100%'
+                    @$progressbar.removeAttribute 'min'
+                    @$progressbar.removeAttribute 'max'
+                    @$progressbar.removeAttribute 'value'
 
         return

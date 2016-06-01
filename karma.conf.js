@@ -16,9 +16,11 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'https://cdn.rawgit.com/Kocal/dtws-client/master/dist/main.min.js',
+            'http://getbootstrap.com/dist/css/bootstrap.min.css',
             'dist/deepmerge.js',
-            'dist/engine_interface.js',
+            'dist/engine.js',
             'dist/engine_bootstrap.js',
+            'dist/engine_html5.js',
             'dist/progress_bar.js',
             'tests/*.js'
         ],
@@ -31,9 +33,10 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'dist/engine.js': ['coverage'],
+            'dist/engine_bootstrap.js': ['coverage'],
+            'dist/engine_html5.js': ['coverage'],
             'dist/progress_bar.js': ['coverage'],
-            'dist/engine_interface.js': ['coverage'],
-            'dist/engine_bootstrap.js': ['coverage']
         },
 
 

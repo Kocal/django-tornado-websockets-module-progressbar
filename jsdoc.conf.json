@@ -1,6 +1,13 @@
 {
   "source": {
-    "include": ["package.json", "dist/engines.js", "README.md", "LICENSE"]
+    "include": [
+      "package.json",
+      "dist/engine.js",
+      "dist/engine_bootstrap.js",
+      "dist/engine_html5.js",
+      "README.md",
+      "LICENSE"
+    ]
   },
   "plugins": [
     "plugins/markdown"
