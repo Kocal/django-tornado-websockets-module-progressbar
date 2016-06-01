@@ -16,6 +16,7 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             'https://cdn.rawgit.com/Kocal/dtws-client/master/dist/main.min.js',
+            'http://getbootstrap.com/dist/css/bootstrap.min.css',
             'dist/deepmerge.js',
             'dist/engine.js',
             'dist/engine_bootstrap.js',
