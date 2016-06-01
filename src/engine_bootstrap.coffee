@@ -88,8 +88,9 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         if @options.progressbar.context in ['info', 'success', 'warning', 'danger']
             @$progressbar.classList.add 'progress-bar-' + @options.progressbar.context
 
-        @$progressbar.classList.add 'progress-bar-striped' if @options.progressbar.striped is true
-        @$progressbar.classList.add 'active' if @options.progressbar.animated is true
+        if @options.progressbar.striped is true
+            @$progressbar.classList.add 'progress-bar-striped'
+            @$progressbar.classList.add 'active' if @options.progressbar.animated is true
 
         # Progression (text in progress bar)
         @$progression = document.createElement 'span'
@@ -98,7 +99,7 @@ class ProgressBarModuleEngineBootstrap extends ProgressBarModuleEngine
         # Label
         @$label = document.createElement 'span'
         @$label.classList.add __ for __ in @options.label.classes
-        @$label.style.display = 'none' if @options.label.visibility is false
+        @$label.style.display = 'none' if @options.label.visible is false
 
         return
 

@@ -115,9 +115,9 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
     }
     if (this.options.progressbar.striped === true) {
       this.$progressbar.classList.add('progress-bar-striped');
-    }
-    if (this.options.progressbar.animated === true) {
-      this.$progressbar.classList.add('active');
+      if (this.options.progressbar.animated === true) {
+        this.$progressbar.classList.add('active');
+      }
     }
     this.$progression = document.createElement('span');
     if (this.options.progression.visible === false) {
@@ -129,7 +129,7 @@ ProgressBarModuleEngineBootstrap = (function(superClass) {
       __ = ref1[i];
       this.$label.classList.add(__);
     }
-    if (this.options.label.visibility === false) {
+    if (this.options.label.visible === false) {
       this.$label.style.display = 'none';
     }
   };
