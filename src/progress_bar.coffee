@@ -75,6 +75,7 @@ class ProgressBarModule
         # @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
         # @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
         # @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
+        # @prop {String}  options.html5.progression.position - Change `progression`'s position: `left` or `right` by default.
 
         # @private
         ###
@@ -100,8 +101,8 @@ class ProgressBarModule
                     position: 'top' # 'bottom'
                 progression:
                     visible: true
-                    position: 'right'
                     format: '{{percent}}%'
+                    position: 'right'
 
         @options = deepmerge @options, options
 
