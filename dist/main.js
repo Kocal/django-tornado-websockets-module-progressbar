@@ -524,6 +524,32 @@ ProgressBarModule = (function() {
    *         }
    *     }
    * });
+   *
+   * progress.on('open', function() {
+   *
+   *     progress.emit('an_event ...');
+   *
+   *     progress.on('before_init', function() {
+   *         // Is called before progress bar initialization
+   *     });
+   *
+   *     progress.on('after_init', function() {
+   *         // Is called after progress bar initialization
+   *     });
+   *
+   *     progress.on('before_update', function() {
+   *         // Is called before progress bar updating
+   *     });
+   *
+   *     progress.on('after_update', function() {
+   *         // Is called after progress bar updating
+   *     });
+   *
+   *     progress.on('done', function() {
+   *         // Is called when progression is done
+   *     });
+   * });
+   *
    */
   function ProgressBarModule(path, container, options) {
     if (options == null) {
