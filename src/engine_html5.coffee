@@ -72,10 +72,10 @@ class ProgressBarModuleEngineHtml5 extends ProgressBarModuleEngine
     ###
     _createElements: ->
         @$progress = document.createElement 'div'
+        @$progress.classList.add 'progress'
 
         @$progressbar = document.createElement 'progress'
         @$progressbar.classList.add 'progress-bar'
-        @$progressbar.setAttribute 'role', 'progressbar'
 
         # Progression (text aside progress bar)
         @$progression = document.createElement 'span'

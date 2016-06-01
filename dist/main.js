@@ -428,9 +428,9 @@ ProgressBarModuleEngineHtml5 = (function(superClass) {
   ProgressBarModuleEngineHtml5.prototype._createElements = function() {
     var __, i, len, ref;
     this.$progress = document.createElement('div');
+    this.$progress.classList.add('progress');
     this.$progressbar = document.createElement('progress');
     this.$progressbar.classList.add('progress-bar');
-    this.$progressbar.setAttribute('role', 'progressbar');
     this.$progression = document.createElement('span');
     if (this.options.progression.visible === false) {
       this.$progression.style.display = 'none';
