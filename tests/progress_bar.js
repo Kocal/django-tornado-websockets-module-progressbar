@@ -65,6 +65,20 @@ describe('`ProgressBarModule(path, container, options)`', function () {
         }).not.toThrowError();
     });
 
+    it('should prefix `path` by a `/`', function () {
+        var progress = new ProgressBarModule('foo', document.createElement('div'));
+
+        expect(progress.path).toEqual('/foo');
+        expect(progress.websocket.path, '/module/progress_bar/foo')
+    });
+
+    it('should not prefix `path` by a `/`', function () {
+        var progress = new ProgressBarModule('/foo', document.createElement('div'));
+
+        expect(progress.path).toEqual('/foo');
+        expect(progress.websocket.path, '/module/progress_bar/foo')
+    });
+
     it('should use `ProgressBarModuleEngineBootstrap` as rendering engine', function () {
         var progress = new ProgressBarModule('foo', document.createElement('div'), { type: 'bootstrap' });
 
@@ -132,27 +146,21 @@ describe('`ProgressBarModule::on(event, callback)`', function () {
 
 describe('`ProgressBarModule::emit(event, data)`', function () {
 
-    it("should be using `TornadoWebSocket::emit(event, callback)` shortcut", function (done) {
+    it("should be using `TornadoWebSocket::emit(event, callback)` shortcut", function () {
 
-        var spyOnEmit = spyOn(TornadoWebSocket.prototype, 'emit').and.callThrough();
-        var progress = new ProgressBarModule('/my_progress_bar', document.createElement('div'), {
+        var spyOnEmit = spyOn(TornadoWebSocket.prototype, 'emit');
+        var progress = new ProgressBarModule('my_progress_bar', document.createElement('div'), {
             type: 'bootstrap',
             websocket: {
                 host: 'kocal.fr'
             }
         });
 
-        progress.on('open', function () {
-            progress.emit('my_event', { my: 'data' });
-            expect(spyOnEmit).toHaveBeenCalledWith('my_event', { my: 'data' });
+        progress.emit('my_event', { my: 'data' });
+        expect(spyOnEmit).toHaveBeenCalledWith('my_event', { my: 'data' });
 
-            spyOnEmit.calls.reset();
-
-            progress.emit('my_other_event');
-            expect(spyOnEmit).toHaveBeenCalledWith('my_other_event', {});
-
-            done();
-        })
+        progress.emit('my_event');
+        expect(spyOnEmit).toHaveBeenCalledWith('my_event', {});
     });
 
 });
