@@ -25,39 +25,38 @@
 <script src="../dist/main.js"></script>
 <script>
   var $btnProcess = document.querySelector('#process');
-  var automations = [
-    { type: 'html5', html5: { label: {} } },
-    { type: 'html5', html5: { label: { position: 'top' } } },
-    { type: 'html5', html5: { label: { position: 'bottom' } } },
-    { type: 'html5', html5: { label: { position: 'top', visible: true } } },
-    { type: 'html5', html5: { label: { position: 'top', visible: false } } },
-    { type: 'html5', html5: { label: { position: 'bottom', visible: true } } },
-    { type: 'html5', html5: { label: { position: 'bottom', visible: false } } },
-    { type: 'html5', html5: { progression: {} } },
-    { type: 'html5', html5: { progression: { format: '{{percent}}% ', position: 'left', visible: true } } },
-    { type: 'html5', html5: { progression: { format: '{{percent}}% ', position: 'left', visible: false } } },
-    { type: 'html5', html5: { progression: { format: ' {{percent}}% ', position: 'right', visible: true } } },
-    { type: 'html5', html5: { progression: { format: ' {{percent}}%', position: 'right', visible: false } } },
-    { type: 'html5', html5: { progression: { format: ' Progression: {{percent}}%' } } },
-    { type: 'html5', html5: { progression: { position: 'left', format: 'Progression: {{percent}}% ' } } },
-    { type: 'html5', html5: { progression: { position: 'right', format: ' Progression: {{percent}}%' } } },
-
+  var configurations = [
+    { label: {} },
+    { label: { position: 'top' } },
+    { label: { position: 'bottom' } },
+    { label: { position: 'top', visible: true } },
+    { label: { position: 'top', visible: false } },
+    { label: { position: 'bottom', visible: true } },
+    { label: { position: 'bottom', visible: false } },
+    { progression: {} },
+    { progression: { format: '{{percent}}% ', position: 'left', visible: true } },
+    { progression: { format: '{{percent}}% ', position: 'left', visible: false } },
+    { progression: { format: ' {{percent}}% ', position: 'right', visible: true } },
+    { progression: { format: ' {{percent}}%', position: 'right', visible: false } },
+    { progression: { format: ' Progression: {{percent}}%' } },
+    { progression: { position: 'left', format: 'Progression: {{percent}}% ' } },
+    { progression: { position: 'right', format: ' Progression: {{percent}}%' } },
   ];
 
-  automations.forEach(function (automation, index) {
+  configurations.forEach(function (configuration, index) {
     var id = 'progress-bar--container-' + index;
-
     var $root = document.createElement('div');
     var $name = document.createElement('h4');
-    var $container = document.createElement('div');
     var $btnProcess = document.createElement('button');
     var $hr = document.createElement('hr');
 
-    var progressBar = new ProgressBarModule('/my_progress_bar/' + index, $container, automation);
+    var $container = document.createElement('div');
 
-    // --- Bind progress bar's events
+    var websocket = new TornadoWebSocket('/my_progress_bar/' + index);
+    var engine = new ProgressBarModuleEngineHtml5($container, configuration);
+    var progressBar = new ProgressBarModule(websocket, engine);
 
-    progressBar.on('open', function () {
+    websocket.on('open', function () {
       $btnProcess.removeAttribute('disabled');
 
       $btnProcess.addEventListener('click', function (e) {
@@ -68,20 +67,16 @@
       });
     });
 
-    progressBar.on('error', function () {
-    });
-    progressBar.on('close', function () {
-    });
+    progressBar.on('error', function () { });
+    progressBar.on('close', function () { });
     progressBar.on('before_init', function () {
-      progressBar.engine.updateLabel('Connexion en cours...')
+      progressBar.engine.updateLabel('Un label...')
     });
     progressBar.on('after_init', function () {
-      progressBar.engine.updateLabel('Connexion terminée.')
+      //progressBar.engine.updateLabel('Connexion terminée.')
     });
-    progressBar.on('before_update', function () {
-    });
-    progressBar.on('after_update', function () {
-    });
+    progressBar.on('before_update', function () { });
+    progressBar.on('after_update', function () { });
     progressBar.on('done', function () {
       $btnProcess.removeAttribute('disabled');
       $btnProcess.textContent = 'Start'
@@ -91,13 +86,7 @@
       console.warn(data);
     });
 
-    window.addEventListener('beforeunload', function () {
-      //      progressBar.close();
-    });
-
-    // . . .
-
-    $name.textContent = JSON.stringify(automation);
+    $name.textContent = index + ". " + JSON.stringify(configuration);
     $container.setAttribute('id', id);
 
     $btnProcess.classList.add('process');
