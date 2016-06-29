@@ -1,11 +1,9 @@
 function initProgressBootstrap($container, options) {
-    return new ProgressBarModule('/', $container, {
-        websocket: {
-            host: 'kocal.fr'
-        },
-        type: 'bootstrap',
-        bootstrap: options
+    var websocket = new TornadoWebSocket('/', {
+        'host': 'kocal.fr'
     });
+    var engine = new ProgressBarModuleEngineBootstrap($container, options);
+    return new ProgressBarModule(websocket, engine);
 }
 
 describe('`ProgressBarModule::engine`', function () {

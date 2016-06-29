@@ -11,41 +11,35 @@ describe("`ProgressBarModuleEngine`", function () {
 
 describe("`ProgressBarModuleEngine::constructor($container, options)`", function () {
 
-    it("should throw a TypeError because there is no `$containe`r", function () {
+    it("should throw a TypeError because there is no `$container`", function () {
         expect(function () {
             new ProgressBarModuleEngine()
-        }).toThrow(new TypeError('You must pass an HTML element as container during `ProgressBarModuleEngine`'
-                                 + ' instantiation.'));
-    });
-
-    it("should throw a TypeError because `$container` is not an HTMLElement", function () {
-        expect(function () {
-            new ProgressBarModuleEngine('not an HTML element')
-        }).toThrow(new TypeError('You must pass an HTML element as container during `ProgressBarModuleEngine`'
-                                 + ' instantiation.'));
+        }).toThrow(new TypeError(
+            'Parameter `$container` should be an instance of HTMLElement, got undefined instead.'
+        ));
     });
 
     it("should not throw a TypeError because `$container` is an HTMLElement", function () {
         expect(function () {
             var $container = document.createElement('div');
             new ProgressBarModuleEngine($container);
-        }).not.toThrow(new TypeError('You must pass an HTML element as container during `ProgressBarModuleEngine`'
-                                     + ' instantiation.'));
+        }).not.toThrow(new TypeError(
+            'Parameter `$container` should be an instance of HTMLElement, got undefined instead.'
+        ));
     });
 
-    it("should throw a TypeError because `options` is not an Object instance", function () {
+    it("should throw a TypeError because `options` is not an Object", function () {
         expect(function () {
             var $container = document.createElement('div');
             new ProgressBarModuleEngine($container, 'not an object');
-        }).toThrow(new TypeError('You must pass an Object as options during `ProgressBarModuleEngine` instantiation.'));
+        }).toThrow(new TypeError('Parameter `options` should be an Object, got string instead.'));
     });
 
-    it("should not throw a TypeError because `options` is an Object instance", function () {
+    it("should not throw a TypeError because `options` is an Object", function () {
         expect(function () {
             var $container = document.createElement('div');
-            new ProgressBarModuleEngine($container, { my: 'object' });
-        }).not.toThrow(new TypeError('You must pass an Object as options during `ProgressBarModuleEngine`'
-                                     + ' instantiation.'));
+            new ProgressBarModuleEngine($container, {'my': 'object'});
+        }).not.toThrow(new TypeError('Parameter `options` should be an Object, got string instead.'));
     });
 
 });
@@ -56,7 +50,7 @@ describe("`ProgressBarModuleEngine` methods should be overridden.", function () 
     }
 
     extend(MyEngine, ProgressBarModuleEngine);
-    var myEngine = new MyEngine(document.createElement('div'), { my: 'object' });
+    var myEngine = new MyEngine(document.createElement('div'), {my: 'object'});
 
     it("`ProgressBarModuleEngine::render()` should be overridden.", function () {
         expect(function () {
@@ -112,7 +106,7 @@ describe("`ProgressBarModuleEngine` methods should be overridden.", function () 
     MyEngine.prototype.updateProgression = function () {
     };
 
-    var myEngine = new MyEngine(document.createElement('div'), { my: 'object' });
+    var myEngine = new MyEngine(document.createElement('div'), {my: 'object'});
 
     it("`ProgressBarModuleEngine::render()` should be overridden.", function () {
         expect(function () {
