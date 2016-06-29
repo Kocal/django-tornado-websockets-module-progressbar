@@ -34,58 +34,58 @@
 <script src="../dist/main.js"></script>
 <script>
   var $btnProcess = document.querySelector('#process');
-  var automations = [
-    { type: 'bootstrap', bootstrap: { label: {} } },
-    { type: 'bootstrap', bootstrap: { label: { position: 'bottom' } } },
-    { type: 'bootstrap', bootstrap: { label: { visible: false } } },
-    { type: 'bootstrap', bootstrap: { label: { position: 'bottom', visible: false } } },
+  var configurations = [
+    { label: {} },
+    { label: { position: 'bottom' } },
+    { label: { visible: false } },
+    { label: { position: 'bottom', visible: false } },
 
-    { type: 'bootstrap', bootstrap: { progressbar: { context: 'info' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { context: 'success' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { context: 'warning' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { context: 'danger' } } },
+    { progressbar: { context: 'info' } },
+    { progressbar: { context: 'success' } },
+    { progressbar: { context: 'warning' } },
+    { progressbar: { context: 'danger' } },
 
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'not a context' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'info' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'success' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'warning' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'danger' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { striped: true, context: 'not a context' } } },
+    { progressbar: { striped: true, context: 'not a context' } },
+    { progressbar: { striped: true, context: 'info' } },
+    { progressbar: { striped: true, context: 'success' } },
+    { progressbar: { striped: true, context: 'warning' } },
+    { progressbar: { striped: true, context: 'danger' } },
+    { progressbar: { striped: true, context: 'not a context' } },
 
-    { type: 'bootstrap', bootstrap: { progressbar: { animated: true, striped: true, context: 'info' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { animated: true, striped: true, context: 'success' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { animated: true, striped: true, context: 'warning' } } },
-    { type: 'bootstrap', bootstrap: { progressbar: { animated: true, striped: true, context: 'danger' } } },
+    { progressbar: { animated: true, striped: true, context: 'info' } },
+    { progressbar: { animated: true, striped: true, context: 'success' } },
+    { progressbar: { animated: true, striped: true, context: 'warning' } },
+    { progressbar: { animated: true, striped: true, context: 'danger' } },
 
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'not a context' } } },
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'info' } } },
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'success' } } },
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'warning' } } },
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'danger' } } },
-    { type: 'bootstrap', bootstrap: { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'not a context' } } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'not a context' } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'info' } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'success' } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'warning' } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'danger' } },
+    { progression: { visible: false }, progressbar: { animated: true, striped: true, context: 'not a context' } },
 
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'not a context' } } },
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'info' } } },
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'success' } } },
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'warning' } } },
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'danger' } } },
-    { type: 'bootstrap', bootstrap: { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'not a context' } } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'not a context' } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'info' } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'success' } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'warning' } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'danger' } },
+    { progression: { format: "Progression... ({{percent}} %)" }, progressbar: { animated: true, striped: true, context: 'not a context' } },
   ];
 
-  automations.forEach(function (automation, index) {
+  configurations.forEach(function (configuration, index) {
     var id = 'progress-bar--container-' + index;
-
     var $root = document.createElement('div');
     var $name = document.createElement('h4');
-    var $container = document.createElement('div');
     var $btnProcess = document.createElement('button');
     var $hr = document.createElement('hr');
 
-    var progressBar = new ProgressBarModule('/my_progress_bar/' + index, $container, automation);
+    var $container = document.createElement('div');
 
-    // --- Bind progress bar's events
+    var websocket = new TornadoWebSocket('/my_progress_bar/' + index);
+    var engine = new ProgressBarModuleEngineBootstrap($container, configuration);
+    var progressBar = new ProgressBarModule(websocket, engine);
 
-    progressBar.on('open', function () {
+    websocket.on('open', function () {
       $btnProcess.removeAttribute('disabled');
 
       $btnProcess.addEventListener('click', function (e) {
@@ -96,20 +96,16 @@
       });
     });
 
-    progressBar.on('error', function () {
-    });
-    progressBar.on('close', function () {
-    });
+    progressBar.on('error', function () { });
+    progressBar.on('close', function () { });
     progressBar.on('before_init', function () {
-      progressBar.engine.updateLabel('Connexion en cours...')
+      progressBar.engine.updateLabel('Un label...')
     });
     progressBar.on('after_init', function () {
-      progressBar.engine.updateLabel('Connexion terminée.')
+      //progressBar.engine.updateLabel('Connexion terminée.')
     });
-    progressBar.on('before_update', function () {
-    });
-    progressBar.on('after_update', function () {
-    });
+    progressBar.on('before_update', function () { });
+    progressBar.on('after_update', function () { });
     progressBar.on('done', function () {
       $btnProcess.removeAttribute('disabled');
       $btnProcess.textContent = 'Start'
@@ -119,13 +115,7 @@
       console.warn(data);
     });
 
-    window.addEventListener('beforeunload', function () {
-      //      progressBar.close();
-    });
-
-    // . . .
-
-    $name.textContent = JSON.stringify(automation);
+    $name.textContent = index + ". " + JSON.stringify(configuration);
     $container.setAttribute('id', id);
 
     $btnProcess.classList.add('process');

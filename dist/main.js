@@ -55,21 +55,30 @@ var ProgressBarModuleEngine;
 ProgressBarModuleEngine = (function() {
 
   /**
+   * Defaults options for an engine.
+   * @memberof ProgressBarModuleEngine
+   * @param {Object} - Defaults options.
+   */
+  ProgressBarModuleEngine.prototype.defaults = {};
+
+
+  /**
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
    * @param {HTMLElement} $container - HTML container for the progress bar.
    * @param {Object} options - Options from ProgressBarModule.
    */
+
   function ProgressBarModuleEngine($container, options) {
     if ($container === void 0 || !($container instanceof HTMLElement)) {
-      throw new TypeError("You must pass an HTML element as container during `ProgressBarModuleEngine` instantiation.");
+      throw new TypeError("Parameter `$container` should be an instance of HTMLElement, got " + (typeof $container) + " instead.");
     }
     if (!(options instanceof Object)) {
-      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
+      throw new TypeError("Parameter `options` should be an Object, got " + (typeof options) + " instead.");
     }
     this.$container = $container;
-    this.options = options;
+    this.options = deepmerge(this.defaults, options);
   }
 
 
@@ -149,12 +158,42 @@ var ProgressBarModuleEngineBootstrap,
 ProgressBarModuleEngineBootstrap = (function(superClass) {
   extend(ProgressBarModuleEngineBootstrap, superClass);
 
+  ProgressBarModuleEngineBootstrap.prototype.defaults = {
+    label: {
+      visible: true,
+      classes: ['progressbar-label'],
+      position: 'top'
+    },
+    progressbar: {
+      context: 'info',
+      striped: false,
+      animated: false
+    },
+    progression: {
+      visible: true,
+      format: '{{percent}}%'
+    }
+  };
+
 
   /**
    * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
    * @extends ProgressBarModuleEngine
    * @see ProgressBarModuleEngine
+   *
+   * @prop {Object}  options - Options to use when `type` is `bootstrap`.
+   * @prop {Object}  options.label - Options for `label`'s behavior.
+   * @prop {Boolean} options.label.visible - Switch on/off `label`'s visibility: `true` by default.
+   * @prop {Array}   options.label.classes - Array of CSS classes for `label`'.
+   * @prop {String}  options.label.position - Change `label`'s position: `bottom` or `top` by default.
+   * @prop {Object}  options.progressbar - Options for `progressbar`'s behavior.
+   * @prop {String}  options.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
+   * @prop {Boolean} options.progressbar.striped - Switch on/off `progress bar`'s striped effect: `false` by default.
+   * @prop {Boolean} options.progressbar.animated - Switch on/off `progress bar`'s animated effect: `false` by default.
+   * @prop {Object}  options.progression - Options for `progression`'s behavior.
+   * @prop {Boolean} options.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+   * @prop {String}  options.progression.format - Change `progression`'s format: `{{percent}}%` by default
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
@@ -338,12 +377,35 @@ var ProgressBarModuleEngineHtml5,
 ProgressBarModuleEngineHtml5 = (function(superClass) {
   extend(ProgressBarModuleEngineHtml5, superClass);
 
+  ProgressBarModuleEngineHtml5.prototype.defaults = {
+    label: {
+      visible: true,
+      classes: ['progressbar-label'],
+      position: 'top'
+    },
+    progression: {
+      visible: true,
+      format: '{{percent}}%',
+      position: 'right'
+    }
+  };
+
 
   /**
    * HTML5 engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
    * @extends ProgressBarModuleEngine
    * @see ProgressBarModuleEngine
+   *
+   * @prop {Object}  options - Options to use when `type` is `html5`.
+   * @prop {Object}  options.label - Options for `label`'s behavior.
+   * @prop {Boolean} options.label.visible - Switch on/off `label`'s visibility: `true` by default.
+   * @prop {Array}   options.label.classes - Array of CSS classes for `label`'.
+   * @prop {String}  options.label.position - Change `label`'s position: `bottom` or `top` by default.
+   * @prop {Object}  options.progression - Options for `progression`'s behavior.
+   * @prop {Boolean} options.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+   * @prop {String}  options.progression.format - Change `progression`'s format: `{{percent}}%` by default
+   * @prop {String}  options.progression.position - Change `progression`'s position: `left` or `right` by default.
    */
 
   function ProgressBarModuleEngineHtml5(container, options) {
@@ -498,36 +560,52 @@ ProgressBarModuleEngineHtml5 = (function(superClass) {
 
 })(ProgressBarModuleEngine);
 
-var ProgressBarModule;
+var ProgressBarModule,
+  extend = function(child, parent) {
+    for (var key in parent) {
+      if (hasProp.call(parent, key)) child[key] = parent[key];
+    }
 
-ProgressBarModule = (function() {
+    function ctor() {
+      this.constructor = child;
+    }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    child.__super__ = parent.prototype;
+    return child;
+  },
+  hasProp = {}.hasOwnProperty;
+
+ProgressBarModule = (function(superClass) {
+  extend(ProgressBarModule, superClass);
+
 
   /**
    * Initialize a new ProgressBarModule object with given parameters.
    *
    * @constructs
-   * @param {String} path - Path of a progress bar module application
-   * @param {HTMLElement} container - HTML container for progress bar HTML element
-   * @param {Object}  options - Object options
+   * @param {TornadoWebSocket} websocket - A TornadoWebSocket instance.
+   * @param {ProgressBarModuleEngine} engine - An instance that implement ProgressBarModuleEngineInterface.
+   * @param {string} prefix - String that will prefix events name for TornadoWebSocket's on/emit methods.
    * @example
+   * var websocket = new TornadoWebSocket('/my_progressbar');
    * var $container = document.querySelector('#container');
-   * var progress = new ProgressBarModule('/my_progressbar', $container, {
-   *     websocket: {
-   *         host: 'my_host.com'
-   *     },
-   *     bootstrap: {
-   *         progressbar: {
-   *             animated: false,
-   *         },
-   *         progression: {
-   *             format: 'Progression: {percent}%'
-   *         }
+   * var engine = new ProgressBarModuleEngineBootstrap($container, {
+   *     progressbar: {
+   *         animated: true,
+   *         striped: true,
    *     }
    * });
    *
-   * progress.on('open', function() {
+   * var progress = new ProgressBarModule(websocket, engine, 'my_prefix');
    *
-   *     progress.emit('an_event ...');
+   * websocket.on('open', function() {
+   *
+   *     // emit 'event'
+   *     websocket.emit('event ...');
+   *
+   *     // emit 'my_prefix_event'
+   *     progress.emit('event ...');
    *
    *     progress.on('before_init', function() {
    *         // Is called before progress bar initialization
@@ -551,128 +629,35 @@ ProgressBarModule = (function() {
    * });
    *
    */
-  function ProgressBarModule(path, container, options) {
-    if (options == null) {
-      options = {};
+
+  function ProgressBarModule(websocket, engine, prefix) {
+    if (prefix == null) {
+      prefix = 'module_progressbar_';
     }
     if (!(this instanceof ProgressBarModule)) {
-      return new ProgressBarModule(path, container, options);
+      return new ProgressBarModule(websocket, engine);
     }
-    if (path === void 0 || typeof path !== 'string') {
-      throw new TypeError("You must pass 'path' parameter during 'ProgressBarModule' instantiation.");
+    if (!(websocket instanceof TornadoWebSocket)) {
+      throw new TypeError("Parameter `websocket` should be an instance of TornadoWebSocket, got " + (typeof websocket) + " instead.");
     }
-    if (container === void 0 || !(container instanceof HTMLElement)) {
-      throw new TypeError("You must pass an HTML element as container during `ProgressBarModule` instantiation.");
+    if (!(engine instanceof ProgressBarModuleEngine)) {
+      throw new TypeError("Parameter `engine` should be an instance of ProgressBarModuleEngine, got " + (typeof engine) + " instead.");
     }
-    if (!(options instanceof Object)) {
-      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
-    }
+    ProgressBarModule.__super__.constructor.call(this, websocket, prefix);
 
     /**
-     * @prop {String} path - Path of a progress bar module application.
-     * @private
-     */
-    this.path = path.trim();
-    this.path = this.path[0] === '/' ? this.path : '/' + this.path;
-
-    /**
-     * @prop {HTMLElement} container - HTML container for progress bar HTML element
-     * @private
-     */
-    this.container = container;
-
-    /**
-     * @prop {Object}  options - Default options which can be overridden during {@link ProgressBarModule} instantiation.
-     * @prop {Object}  options.websocket - Same options than `TornadoWebSocket` constructor.
-     * @prop {String}  options.type - Type of the progress bar, `html5` or `bootstrap` by default.
-     *
-     * @prop {Object}  options.bootstrap - Options to use when `type` is `bootstrap`.
-     * @prop {Object}  options.bootstrap.label - Options for `label`'s behavior.
-     * @prop {Boolean} options.bootstrap.label.visible - Switch on/off `label`'s visibility: `true` by default.
-     * @prop {Array}   options.bootstrap.label.classes - Array of CSS classes for `label`'.
-     * @prop {String}  options.bootstrap.label.position - Change `label`'s position: `bottom` or `top` by default.
-     * @prop {Object}  options.bootstrap.progressbar - Options for `progressbar`'s behavior.
-     * @prop {String}  options.bootstrap.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
-     * @prop {Boolean} options.bootstrap.progressbar.striped - Switch on/off `progress bar`'s striped effect: `false` by default.
-     * @prop {Boolean} options.bootstrap.progressbar.animated - Switch on/off `progress bar`'s animated effect: `false` by default.
-     * @prop {Object}  options.bootstrap.progression - Options for `progression`'s behavior.
-     * @prop {Boolean} options.bootstrap.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
-     * @prop {String}  options.bootstrap.progression.format - Change `progression`'s format: `{{percent}}%` by default
-     *
-     * @prop {Object}  options.html5 - Options to use when `type` is `html5`.
-     * @prop {Object}  options.html5.label - Options for `label`'s behavior.
-     * @prop {Boolean} options.html5.label.visible - Switch on/off `label`'s visibility: `true` by default.
-     * @prop {Array}   options.html5.label.classes - Array of CSS classes for `label`'.
-     * @prop {String}  options.html5.label.position - Change `label`'s position: `bottom` or `top` by default.
-     * @prop {Object}  options.html5.progression - Options for `progression`'s behavior.
-     * @prop {Boolean} options.html5.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
-     * @prop {String}  options.html5.progression.format - Change `progression`'s format: `{{percent}}%` by default
-     * @prop {String}  options.html5.progression.position - Change `progression`'s position: `left` or `right` by default.
-    
-     * @private
-     */
-    this.options = {
-      websocket: {},
-      type: 'bootstrap',
-      bootstrap: {
-        label: {
-          visible: true,
-          classes: ['progressbar-label'],
-          position: 'top'
-        },
-        progressbar: {
-          context: 'info',
-          striped: false,
-          animated: false
-        },
-        progression: {
-          visible: true,
-          format: '{{percent}}%'
-        }
-      },
-      html5: {
-        label: {
-          visible: true,
-          classes: ['progressbar-label'],
-          position: 'top'
-        },
-        progression: {
-          visible: true,
-          format: '{{percent}}%',
-          position: 'right'
-        }
-      }
-    };
-    this.options = deepmerge(this.options, options);
-
-    /**
-     * @prop {ProgressBarModuleEngine} engine - Progress bar engine.
+     * @prop {ProgressBarModuleEngine} engine - Progress bar engine implementing this interface.
      * @public
      */
-    this.engine = null;
-    switch (this.options.type) {
-      case 'bootstrap':
-        this.engine = new ProgressBarModuleEngineBootstrap(this.container, this.options.bootstrap);
-        break;
-      case 'html5':
-        this.engine = new ProgressBarModuleEngineHtml5(this.container, this.options.html5);
-        break;
-      default:
-        throw new Error('Given `type` should be equal to ``bootstrap`` or ``html5``.');
-    }
-
-    /**
-     * @prop {TornadoWebSocket} websocket - Instance of TornadoWebSocket.
-     * @public
-     */
-    this.websocket = new TornadoWebSocket('/module/progress_bar' + this.path, this.options.websocket);
+    this.engine = engine;
     this.init();
+    return;
   }
 
 
   /**
-   * Is automatically called at the end of the instantiation. Binds `init` and `update` events and render the
-   * progress bar from defined engine.
+   * Is automatically called at the end of the current object instantiation. Binds `init` and `update` events and
+   * render the progress bar from defined engine.
    *
    * @memberof ProgressBarModule
    */
@@ -691,37 +676,6 @@ ProgressBarModule = (function() {
     this.engine.render();
   };
 
-
-  /**
-   * Shortcut off `TornadoWebSocket.on` method.
-   *
-   * @param {String} event - Event name.
-   * @param {Function} callback - Function to execute when event `event` is received.
-   * @memberof ProgressBarModule
-   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.on
-   */
-
-  ProgressBarModule.prototype.on = function(event, callback) {
-    return this.websocket.on(event, callback);
-  };
-
-
-  /**
-   * Shortcut off `TornadoWebSocket.emit` method.
-   *
-   * @param {String} event - Event name.
-   * @param {Object|*} data - Data to send.
-   * @memberof ProgressBarModule
-   * @see http://django-tornado-websockets.readthedocs.io/en/latest/usage.html#TornadoWebSocket.emit
-   */
-
-  ProgressBarModule.prototype.emit = function(event, data) {
-    if (data == null) {
-      data = {};
-    }
-    return this.websocket.emit(event, data);
-  };
-
   return ProgressBarModule;
 
-})();
+})(TornadoWebSocketModule);

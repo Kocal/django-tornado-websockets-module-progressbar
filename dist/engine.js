@@ -3,21 +3,30 @@ var ProgressBarModuleEngine;
 ProgressBarModuleEngine = (function() {
 
   /**
+   * Defaults options for an engine.
+   * @memberof ProgressBarModuleEngine
+   * @param {Object} - Defaults options.
+   */
+  ProgressBarModuleEngine.prototype.defaults = {};
+
+
+  /**
    * Interface for classes that represent a {@link ProgressBarModule#engine}.
    * @interface
    * @constructs
    * @param {HTMLElement} $container - HTML container for the progress bar.
    * @param {Object} options - Options from ProgressBarModule.
    */
+
   function ProgressBarModuleEngine($container, options) {
     if ($container === void 0 || !($container instanceof HTMLElement)) {
-      throw new TypeError("You must pass an HTML element as container during `ProgressBarModuleEngine` instantiation.");
+      throw new TypeError("Parameter `$container` should be an instance of HTMLElement, got " + (typeof $container) + " instead.");
     }
     if (!(options instanceof Object)) {
-      throw new TypeError("You must pass an Object as options during `ProgressBarModuleEngine` instantiation.");
+      throw new TypeError("Parameter `options` should be an Object, got " + (typeof options) + " instead.");
     }
     this.$container = $container;
-    this.options = options;
+    this.options = deepmerge(this.defaults, options);
   }
 
 

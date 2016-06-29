@@ -1,6 +1,13 @@
 class ProgressBarModuleEngine
 
     ###*
+    # Defaults options for an engine.
+    # @memberof ProgressBarModuleEngine
+    # @param {Object} - Defaults options.
+    ###
+    @::defaults = {}
+
+    ###*
     # Interface for classes that represent a {@link ProgressBarModule#engine}.
     # @interface
     # @constructs
@@ -9,13 +16,14 @@ class ProgressBarModuleEngine
     ###
     constructor: ($container, options) ->
         if $container is undefined or $container not instanceof HTMLElement
-            throw new TypeError "You must pass an HTML element as container during `ProgressBarModuleEngine` instantiation."
+            throw new TypeError "Parameter `$container` should be an instance of HTMLElement,
+                                 got #{typeof $container} instead."
 
         if options not instanceof Object
-            throw new TypeError "You must pass an Object as options during `ProgressBarModuleEngine` instantiation."
+            throw new TypeError "Parameter `options` should be an Object, got #{typeof options} instead."
 
         @$container = $container
-        @options = options
+        @options = deepmerge @defaults, options
 
     ###*
     # Make and display an HTML render to the user.

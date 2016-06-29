@@ -1,11 +1,9 @@
 function initProgressHtml5($container, options) {
-    return new ProgressBarModule('/', $container, {
-        websocket: {
-            host: 'kocal.fr'
-        },
-        type: 'html5',
-        html5: options
+    var websocket = new TornadoWebSocket('/', {
+        'host': 'kocal.fr'
     });
+    var engine = new ProgressBarModuleEngineHtml5($container, options);
+    return new ProgressBarModule(websocket, engine);
 }
 
 describe('`ProgressBarModule::engine`', function () {
@@ -62,7 +60,7 @@ describe('`ProgressBarModuleEngineHtml5::_createElements()`', function () {
     });
 
     it('$label should not be visible', function () {
-        var progress = initProgressHtml5($container, { label: { visible: false } });
+        var progress = initProgressHtml5($container, {label: {visible: false}});
         var $label = progress.engine.$label;
 
         expect($label.style.display).toEqual('none');
@@ -76,7 +74,7 @@ describe('`ProgressBarModuleEngineHtml5::_createElements()`', function () {
     });
 
     it('$progression should not be visible', function () {
-        var progress = initProgressHtml5($container, { progression: { visible: false } });
+        var progress = initProgressHtml5($container, {progression: {visible: false}});
         var $progression = progress.engine.$progression;
 
         expect($progression.style.display).toEqual('none');
@@ -108,7 +106,7 @@ describe('`ProgressBarModuleEngineHtml5::_renderElements()`', function () {
     });
 
     it('$label should be below to $progressbar', function () {
-        var progress = initProgressHtml5($container, { label: { position: 'bottom' } });
+        var progress = initProgressHtml5($container, {label: {position: 'bottom'}});
         var $progressbar = progress.engine.$progressbar;
         var $label = progress.engine.$label;
 
@@ -117,20 +115,22 @@ describe('`ProgressBarModuleEngineHtml5::_renderElements()`', function () {
     });
 
     xit('$progression should be to the left of $progressbar', function () {
-        var progress = initProgressHtml5($container, { progression: { position: 'left' } });
+        var progress = initProgressHtml5($container, {progression: {position: 'left'}});
         var $progressbar = progress.engine.$progressbar;
         var $progression = progress.engine.$progression;
 
-        progress.engine.onInit({ indeterminate: false, min: 0, value: 50, max: 100 });
+        progress.engine.onInit({indeterminate: false, min: 0, value: 50, max: 100});
+        progress.engine.updateProgression('Hop');
         expect($progression.offsetLeft).toBeLessThan($progressbar.offsetLeft);
     });
 
     xit('$progression should to the right of $progressbar', function () {
-        var progress = initProgressHtml5($container, { progression: { position: 'right' } });
+        var progress = initProgressHtml5($container, {progression: {position: 'right'}});
         var $progressbar = progress.engine.$progressbar;
         var $progression = progress.engine.$progression;
 
-        progress.engine.onInit({ indeterminate: false, min: 0, value: 50, max: 100 });
+        progress.engine.onInit({indeterminate: false, min: 0, value: 50, max: 100});
+        progress.engine.updateProgression('Hop');
         expect($progression.offsetLeft).toBeGreaterThan($progressbar.offsetLeft);
     });
 
@@ -247,7 +247,7 @@ describe('`ProgressBarModuleEngineHtml5::updateLable(msg)`', function () {
     });
 
     it('should update progression with custom format', function () {
-        var progress = initProgressHtml5($container, { progression: { format: 'Progression: {{percent}}%' } });
+        var progress = initProgressHtml5($container, {progression: {format: 'Progression: {{percent}}%'}});
         var $progression = progress.engine.$progression;
 
         progress.engine.updateProgression(50);
@@ -274,7 +274,7 @@ describe('`ProgressBarModuleEngineHtml5::onInit(data)`', function () {
         var progress = initProgressHtml5($container, {});
         var $progressbar = progress.engine.$progressbar;
 
-        progress.engine.onInit({ indeterminate: false, min: 50, value: 100, max: 200 });
+        progress.engine.onInit({indeterminate: false, min: 50, value: 100, max: 200});
         expect(parseInt($progressbar.getAttribute('min'), 10)).toEqual(50);
         expect(parseInt($progressbar.getAttribute('value'), 10)).toEqual(100);
         expect(parseInt($progressbar.getAttribute('max'), 10)).toEqual(200);
@@ -284,7 +284,7 @@ describe('`ProgressBarModuleEngineHtml5::onInit(data)`', function () {
         var progress = initProgressHtml5($container, {});
         var $progressbar = progress.engine.$progressbar;
 
-        progress.engine.onInit({ indeterminate: true, min: 500, value: 1000, max: 2000 });
+        progress.engine.onInit({indeterminate: true, min: 500, value: 1000, max: 2000});
         expect($progressbar.getAttribute('min'), 10).toBeNull(); // 0 is default value when indeterminate
         expect($progressbar.getAttribute('value'), 10).toBeNull(); // 100 is ...
         expect($progressbar.getAttribute('max'), 10).toBeNull(); //  100 is ...
@@ -308,22 +308,22 @@ describe('`ProgressBarModuleEngineHtml5::onUpdate(data)`', function () {
     });
 
     it('should be updated', function () {
-        var progress = initProgressHtml5($container, { progression: { format: 'Progression: {{percent}}%' } });
+        var progress = initProgressHtml5($container, {progression: {format: 'Progression: {{percent}}%'}});
         var $progressbar = progress.engine.$progressbar;
         var $progression = progress.engine.$progression;
         var $label = progress.engine.$label;
 
-        progress.engine.onInit({ indeterminate: false, min: 0, value: 0, max: 100 });
+        progress.engine.onInit({indeterminate: false, min: 0, value: 0, max: 100});
         expect(parseInt($progressbar.getAttribute('min'), 10)).toEqual(0);
         expect(parseInt($progressbar.getAttribute('value'), 10)).toEqual(0);
         expect(parseInt($progressbar.getAttribute('max'), 10)).toEqual(100);
 
-        progress.engine.onUpdate({ value: 50 });
+        progress.engine.onUpdate({value: 50});
         expect(parseInt($progressbar.getAttribute('value'), 10)).toEqual(50);
         expect($progression.textContent).toEqual('Progression: 50%');
         expect($label.textContent).toEqual('');
 
-        progress.engine.onUpdate({ value: 70, label: 'A label...' });
+        progress.engine.onUpdate({value: 70, label: 'A label...'});
         expect(parseInt($progressbar.getAttribute('value'), 10)).toEqual(70);
         expect($progression.textContent).toEqual('Progression: 70%');
         expect($label.textContent).toEqual('A label...');

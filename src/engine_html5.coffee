@@ -1,10 +1,30 @@
 class ProgressBarModuleEngineHtml5 extends ProgressBarModuleEngine
 
+    @::defaults =
+        label:
+            visible: true
+            classes: ['progressbar-label']
+            position: 'top' # 'bottom'
+        progression:
+            visible: true
+            format: '{{percent}}%'
+            position: 'right'
+
     ###*
     # HTML5 engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
     # @constructs
     # @extends ProgressBarModuleEngine
     # @see ProgressBarModuleEngine
+    #
+    # @prop {Object}  options - Options to use when `type` is `html5`.
+    # @prop {Object}  options.label - Options for `label`'s behavior.
+    # @prop {Boolean} options.label.visible - Switch on/off `label`'s visibility: `true` by default.
+    # @prop {Array}   options.label.classes - Array of CSS classes for `label`'.
+    # @prop {String}  options.label.position - Change `label`'s position: `bottom` or `top` by default.
+    # @prop {Object}  options.progression - Options for `progression`'s behavior.
+    # @prop {Boolean} options.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+    # @prop {String}  options.progression.format - Change `progression`'s format: `{{percent}}%` by default
+    # @prop {String}  options.progression.position - Change `progression`'s position: `left` or `right` by default.
     ###
     constructor: (container, options) ->
         super container, options
@@ -28,7 +48,7 @@ class ProgressBarModuleEngineHtml5 extends ProgressBarModuleEngine
         if data.indeterminate
             @_config 'indeterminate', true
         else
-            { min: min, max: max, value: value } = data
+            {min: min, max: max, value: value} = data
             @_config 'min', min
             @_config 'max', max
             @_config 'value', value
@@ -105,7 +125,7 @@ class ProgressBarModuleEngineHtml5 extends ProgressBarModuleEngine
         if @options.progression.position is 'left'
             @$progressbar.parentNode.insertBefore @$progression, @$progressbar
         else
-            # insertAfter
+# insertAfter
             @$progressbar.parentNode.insertBefore @$progression, @$progressbar.nextSibling
 
         return
