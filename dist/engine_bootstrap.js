@@ -17,12 +17,42 @@ var ProgressBarModuleEngineBootstrap,
 ProgressBarModuleEngineBootstrap = (function(superClass) {
   extend(ProgressBarModuleEngineBootstrap, superClass);
 
+  ProgressBarModuleEngineBootstrap.prototype.defaults = {
+    label: {
+      visible: true,
+      classes: ['progressbar-label'],
+      position: 'top'
+    },
+    progressbar: {
+      context: 'info',
+      striped: false,
+      animated: false
+    },
+    progression: {
+      visible: true,
+      format: '{{percent}}%'
+    }
+  };
+
 
   /**
    * Bootstrap engine for {@link ProgressBarModule} that implements {@link ProgressBarModuleEngine}.
    * @constructs
    * @extends ProgressBarModuleEngine
    * @see ProgressBarModuleEngine
+   *
+   * @prop {Object}  options - Options to use when `type` is `bootstrap`.
+   * @prop {Object}  options.label - Options for `label`'s behavior.
+   * @prop {Boolean} options.label.visible - Switch on/off `label`'s visibility: `true` by default.
+   * @prop {Array}   options.label.classes - Array of CSS classes for `label`'.
+   * @prop {String}  options.label.position - Change `label`'s position: `bottom` or `top` by default.
+   * @prop {Object}  options.progressbar - Options for `progressbar`'s behavior.
+   * @prop {String}  options.progressbar.context - Change `progress bar`'s context: `success`, `warning`, `danger`, or `info` by default.
+   * @prop {Boolean} options.progressbar.striped - Switch on/off `progress bar`'s striped effect: `false` by default.
+   * @prop {Boolean} options.progressbar.animated - Switch on/off `progress bar`'s animated effect: `false` by default.
+   * @prop {Object}  options.progression - Options for `progression`'s behavior.
+   * @prop {Boolean} options.progression.visible - Switch on/off `progression`'s visibility: `true` by default.
+   * @prop {String}  options.progression.format - Change `progression`'s format: `{{percent}}%` by default
    */
 
   function ProgressBarModuleEngineBootstrap(container, options) {
